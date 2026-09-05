@@ -1,0 +1,37 @@
+# CoffeeMail SDK License
+
+Copyright (c) CoffeeMail. Todos os direitos reservados.
+
+Este software e a documentação associada ("Software") são propriedade
+exclusiva da CoffeeMail e são protegidos pelas leis de direitos autorais
+aplicáveis.
+
+## Uso Permitido
+
+O Software é licenciado, não vendido. O uso do Software é permitido
+somente mediante um acordo de licença comercial escrito e assinado por
+um representante autorizado da CoffeeMail. O Software disponibilizado
+publicamente em registros npm públicos é fornecido apenas para fins de
+integração por clientes autorizados da plataforma CoffeeMail.
+
+## Restrições
+
+É proibido, sem autorização prévia e por escrito da CoffeeMail:
+
+- Copiar, modificar, mesclar, publicar, distribuir, sublicenciar e/ou
+  vender cópias do Software.
+- Realizar engenharia reversa, descompilação ou desmontagem do Software,
+  exceto na extensão expressamente permitida pela lei aplicável.
+- Remover ou alterar quaisquer avisos de propriedade ou licenças contidos
+  no Software.
+
+## Isenção de Garantia
+
+O SOFTWARE É FORNECIDO "NO ESTADO EM QUE SE ENCONTRA", SEM GARANTIA DE
+QUALQUER TIPO, EXPRESSA OU IMPLÍCITA, INCLUINDO, MAS NÃO SE LIMITANDO A,
+GARANTIAS DE COMERCIABILIDADE, ADEQUAÇÃO A UMA FINALIDADE ESPECÍFICA E
+NÃO VIOLAÇÃO. EM NENHUMA HIPÓTESE OS AUTORES OU DETENTORES DOS DIREITOS
+AUTORAIS SERÃO RESPONSÁVEIS POR QUALQUER RECLAMAÇÃO, DANO OU OUTRA
+RESPONSABILIDADE.
+
+Para licenças comerciais, entre em contato: licensing@coffeemail.com
