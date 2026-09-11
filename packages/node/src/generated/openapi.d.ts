@@ -878,9 +878,12 @@ export interface paths {
                                 /** @description URL de destino que recebe os eventos */
                                 url: string;
                                 /** @description Eventos aos quais o webhook está inscrito */
-                                events: string[];
-                                /** @description Status atual do webhook (active, paused ou disabled) */
-                                status: string;
+                                events: ("email.queued" | "email.processing" | "email.sent" | "email.delivered" | "email.delivery_delayed" | "email.opened" | "email.clicked" | "email.bounced" | "email.complained" | "email.failed" | "email.suppressed" | "email.scheduled" | "email.cancelled" | "email.unsubscribed" | "billing.plan_changed")[];
+                                /**
+                                 * @description Status atual do webhook (active, paused ou disabled)
+                                 * @enum {string}
+                                 */
+                                status: "active" | "paused" | "disabled";
                                 /** @description Descrição informada pelo usuário para o webhook */
                                 description: string | null;
                                 /** @description Indica se o webhook possui um segredo de assinatura configurado */
@@ -937,8 +940,11 @@ export interface paths {
                             url: string;
                             /** @description Eventos aos quais o webhook está inscrito */
                             events: ("email.queued" | "email.processing" | "email.sent" | "email.delivered" | "email.delivery_delayed" | "email.opened" | "email.clicked" | "email.bounced" | "email.complained" | "email.failed" | "email.suppressed" | "email.scheduled" | "email.cancelled" | "email.unsubscribed" | "billing.plan_changed")[];
-                            /** @description Status atual do webhook (active, paused ou disabled) */
-                            status: string;
+                            /**
+                             * @description Status atual do webhook (active, paused ou disabled)
+                             * @enum {string}
+                             */
+                            status: "active" | "paused" | "disabled";
                             /** @description Descrição informada pelo usuário para o webhook */
                             description: string | null;
                             /**
@@ -993,8 +999,11 @@ export interface paths {
                             url: string;
                             /** @description Eventos aos quais o webhook está inscrito */
                             events: ("email.queued" | "email.processing" | "email.sent" | "email.delivered" | "email.delivery_delayed" | "email.opened" | "email.clicked" | "email.bounced" | "email.complained" | "email.failed" | "email.suppressed" | "email.scheduled" | "email.cancelled" | "email.unsubscribed" | "billing.plan_changed")[];
-                            /** @description Status atual do webhook (active, paused ou disabled) */
-                            status: string;
+                            /**
+                             * @description Status atual do webhook (active, paused ou disabled)
+                             * @enum {string}
+                             */
+                            status: "active" | "paused" | "disabled";
                             /** @description Descrição informada pelo usuário para o webhook */
                             description: string | null;
                             /**
@@ -1053,8 +1062,11 @@ export interface paths {
                             url: string;
                             /** @description Eventos aos quais o webhook está inscrito */
                             events: ("email.queued" | "email.processing" | "email.sent" | "email.delivered" | "email.delivery_delayed" | "email.opened" | "email.clicked" | "email.bounced" | "email.complained" | "email.failed" | "email.suppressed" | "email.scheduled" | "email.cancelled" | "email.unsubscribed" | "billing.plan_changed")[];
-                            /** @description Status atual do webhook (active, paused ou disabled) */
-                            status: string;
+                            /**
+                             * @description Status atual do webhook (active, paused ou disabled)
+                             * @enum {string}
+                             */
+                            status: "active" | "paused" | "disabled";
                             /** @description Descrição informada pelo usuário para o webhook */
                             description: string | null;
                             /**
@@ -2084,22 +2096,35 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description Default Response */
+                /** @description Lista de identidades de remetente cadastradas */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
                         "application/json": {
+                            /** @description Lista de remetentes da organização */
                             senders: {
-                                /** Format: uuid */
+                                /**
+                                 * Format: uuid
+                                 * @description Identificador único do remetente
+                                 */
                                 id: string;
+                                /** @description Endereço de e-mail do remetente */
                                 email: string;
+                                /** @description Nome de exibição do remetente */
                                 displayName: string | null;
-                                /** Format: date-time */
+                                /**
+                                 * Format: date-time
+                                 * @description Data/hora em que o remetente foi verificado
+                                 */
                                 verifiedAt: string | null;
+                                /** @description Se o remetente está ativo para envio */
                                 active: boolean;
-                                /** Format: date-time */
+                                /**
+                                 * Format: date-time
+                                 * @description Data/hora de criação do remetente
+                                 */
                                 createdAt: string;
                             }[];
                         };
@@ -2115,32 +2140,50 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
+            /** @description Payload para registrar uma identidade de remetente de e-mail avulso */
             requestBody: {
                 content: {
                     "application/json": {
-                        /** Format: email */
+                        /**
+                         * Format: email
+                         * @description Endereço de e-mail do remetente a ser verificado
+                         */
                         email: string;
+                        /** @description Nome de exibição do remetente */
                         displayName?: string;
                     };
                 };
             };
             responses: {
-                /** @description Default Response */
+                /** @description Remetente recém-criado, aguardando verificação */
                 201: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
                         "application/json": {
-                            /** Format: uuid */
+                            /**
+                             * Format: uuid
+                             * @description Identificador único do remetente
+                             */
                             id: string;
+                            /** @description Endereço de e-mail do remetente */
                             email: string;
+                            /** @description Nome de exibição do remetente */
                             displayName: string | null;
+                            /** @description Token enviado ao email para confirmar a verificação */
                             verificationToken: string;
-                            /** Format: date-time */
+                            /**
+                             * Format: date-time
+                             * @description Data/hora em que o remetente foi verificado
+                             */
                             verifiedAt: string | null;
+                            /** @description Se o remetente está ativo para envio */
                             active: boolean;
-                            /** Format: date-time */
+                            /**
+                             * Format: date-time
+                             * @description Data/hora de criação do remetente
+                             */
                             createdAt: string;
                         };
                     };
@@ -2169,24 +2212,32 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
+            /** @description Payload para confirmar a verificação de um remetente */
             requestBody: {
                 content: {
                     "application/json": {
-                        /** Format: uuid */
+                        /**
+                         * Format: uuid
+                         * @description Token de verificação recebido por e-mail
+                         */
                         token: string;
                     };
                 };
             };
             responses: {
-                /** @description Default Response */
+                /** @description Remetente verificado com sucesso */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
                         "application/json": {
-                            /** Format: uuid */
+                            /**
+                             * Format: uuid
+                             * @description Identificador único do remetente
+                             */
                             id: string;
+                            /** @description Endereço de e-mail do remetente */
                             email: string;
                         };
                     };
