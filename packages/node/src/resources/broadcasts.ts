@@ -1,6 +1,13 @@
 import type { HttpClient } from '../core/http-client.js';
 import type { CoffeeMailResponse } from '../core/types.js';
-import type { BroadcastDetail, CreateBroadcastPayload } from '../types/broadcasts.types.js';
+import type {
+  BroadcastDetail,
+  CancelBroadcastResult,
+  CreateBroadcastPayload,
+  ListBroadcastsQuery,
+  ListBroadcastsResponse,
+  SendBroadcastResult,
+} from '../types/broadcasts.types.js';
 
 /**
  * Converte `scheduledAt` (Date | string | undefined) em string ISO 8601 ou undefined.
@@ -23,19 +30,22 @@ export class Broadcasts {
     });
   }
 
-  public async list(query?: { limit?: number; offset?: number }): Promise<CoffeeMailResponse<ReadonlyArray<BroadcastDetail>>> {
-    return this.http.get<ReadonlyArray<BroadcastDetail>>('/v1/product/broadcasts', query);
+  public async list(query?: ListBroadcastsQuery): Promise<CoffeeMailResponse<ListBroadcastsResponse>> {
+    return this.http.get<ListBroadcastsResponse>(
+      '/v1/product/broadcasts',
+      query as Record<string, string | number>
+    );
   }
 
   public async get(id: string): Promise<CoffeeMailResponse<BroadcastDetail>> {
     return this.http.get<BroadcastDetail>(`/v1/product/broadcasts/${id}`);
   }
 
-  public async send(id: string): Promise<CoffeeMailResponse<BroadcastDetail>> {
-    return this.http.post<BroadcastDetail>(`/v1/product/broadcasts/${id}/send`);
+  public async send(id: string): Promise<CoffeeMailResponse<SendBroadcastResult>> {
+    return this.http.post<SendBroadcastResult>(`/v1/product/broadcasts/${id}/send`);
   }
 
-  public async cancel(id: string): Promise<CoffeeMailResponse<{ readonly id: string; readonly status: string }>> {
-    return this.http.post<{ readonly id: string; readonly status: string }>(`/v1/product/broadcasts/${id}/cancel`);
+  public async cancel(id: string): Promise<CoffeeMailResponse<CancelBroadcastResult>> {
+    return this.http.post<CancelBroadcastResult>(`/v1/product/broadcasts/${id}/cancel`);
   }
 }

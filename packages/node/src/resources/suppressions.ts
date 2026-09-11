@@ -1,27 +1,42 @@
 import type { HttpClient } from '../core/http-client.js';
 import type { CoffeeMailResponse } from '../core/types.js';
 import type {
-  CheckSuppressionResponse,
   CreateSuppressionPayload,
+  ListSuppressionsQuery,
+  ListSuppressionsResponse,
   SuppressionDetail,
 } from '../types/suppressions.types.js';
 
 export class Suppressions {
   constructor(private readonly http: HttpClient) {}
 
-  public async list(query?: { limit?: number; offset?: number }): Promise<CoffeeMailResponse<ReadonlyArray<SuppressionDetail>>> {
-    return this.http.get<ReadonlyArray<SuppressionDetail>>('/v1/product/suppressions', query);
+  public async list(query?: ListSuppressionsQuery): Promise<CoffeeMailResponse<ListSuppressionsResponse>> {
+    return this.http.get<ListSuppressionsResponse>(
+      '/v1/product/suppressions',
+      query as Record<string, string | number>
+    );
+  }
+
+  public async get(id: string): Promise<CoffeeMailResponse<SuppressionDetail>> {
+    return this.http.get<SuppressionDetail>(`/v1/product/suppressions/${id}`);
   }
 
   public async create(payload: CreateSuppressionPayload): Promise<CoffeeMailResponse<SuppressionDetail>> {
     return this.http.post<SuppressionDetail>('/v1/product/suppressions', payload);
   }
 
-  public async delete(id: string): Promise<CoffeeMailResponse<{ readonly id: string; readonly deleted: boolean }>> {
-    return this.http.delete<{ readonly id: string; readonly deleted: boolean }>(`/v1/product/suppressions/${id}`);
+  /**
+   * Remove a supressão definitivamente. Não retorna corpo na resposta (204 No Content).
+   */
+  public async delete(id: string): Promise<CoffeeMailResponse<void>> {
+    return this.http.delete<void>(`/v1/product/suppressions/${id}`);
   }
 
-  public async check(email: string): Promise<CoffeeMailResponse<CheckSuppressionResponse>> {
-    return this.http.get<CheckSuppressionResponse>('/v1/product/suppressions/check', { email });
+  /**
+   * Desfaz a supressão, permitindo que o email volte a receber envios.
+   * Não retorna corpo na resposta (204 No Content).
+   */
+  public async reactivate(id: string): Promise<CoffeeMailResponse<void>> {
+    return this.http.post<void>(`/v1/product/suppressions/${id}/reactivate`);
   }
 }

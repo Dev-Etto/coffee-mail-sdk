@@ -2,8 +2,12 @@ import type { HttpClient } from '../core/http-client.js';
 import type { CoffeeMailResponse } from '../core/types.js';
 import type {
   CreateDomainPayload,
+  CreateDomainResponse,
+  DeleteDomainResponse,
   DomainDetail,
   DomainHealthResponse,
+  DomainWarmupStatus,
+  ListDomainsResponse,
   VerifyDomainResponse,
 } from '../types/domains.types.js';
 
@@ -22,12 +26,12 @@ export class Domains {
    *   name: 'empresa.com.br'
    * });
    * if (data) {
-   *   console.log('Insira estes registros no seu provedor de DNS:', data.records);
+   *   console.log('Insira estes registros no seu provedor de DNS:', data.dkimRecordsToPublish);
    * }
    * ```
    */
-  public async create(payload: CreateDomainPayload): Promise<CoffeeMailResponse<DomainDetail>> {
-    return this.http.post<DomainDetail>('/v1/product/domains', payload);
+  public async create(payload: CreateDomainPayload): Promise<CoffeeMailResponse<CreateDomainResponse>> {
+    return this.http.post<CreateDomainResponse>('/v1/product/domains', payload);
   }
 
   /**
@@ -36,14 +40,15 @@ export class Domains {
    * @example
    * ```typescript
    * const { data, error } = await coffeemail.domains.list();
+   * console.log(data?.domains);
    * ```
    */
-  public async list(): Promise<CoffeeMailResponse<ReadonlyArray<DomainDetail>>> {
-    return this.http.get<ReadonlyArray<DomainDetail>>('/v1/product/domains');
+  public async list(): Promise<CoffeeMailResponse<ListDomainsResponse>> {
+    return this.http.get<ListDomainsResponse>('/v1/product/domains');
   }
 
   /**
-   * Obtém detalhes e entradas DNS de um domínio específico pelo ID.
+   * Obtém detalhes e entradas DNS pendentes de um domínio específico pelo ID.
    *
    * @example
    * ```typescript
@@ -77,12 +82,12 @@ export class Domains {
    * const { data, error } = await coffeemail.domains.delete('dom_123');
    * ```
    */
-  public async delete(id: string): Promise<CoffeeMailResponse<{ readonly id: string; readonly deleted: boolean }>> {
-    return this.http.delete<{ readonly id: string; readonly deleted: boolean }>(`/v1/product/domains/${id}`);
+  public async delete(id: string): Promise<CoffeeMailResponse<DeleteDomainResponse>> {
+    return this.http.delete<DeleteDomainResponse>(`/v1/product/domains/${id}`);
   }
 
   /**
-   * Consulta a saúde de entregabilidade e checagem de blacklists do domínio.
+   * Executa um diagnóstico em tempo real de SPF/DKIM/DMARC do domínio.
    *
    * @example
    * ```typescript
@@ -90,6 +95,18 @@ export class Domains {
    * ```
    */
   public async getHealth(id: string): Promise<CoffeeMailResponse<DomainHealthResponse>> {
-    return this.http.get<DomainHealthResponse>(`/v1/product/domains/${id}/health`);
+    return this.http.post<DomainHealthResponse>(`/v1/product/domains/${id}/health`);
+  }
+
+  /**
+   * Consulta o progresso do aquecimento (warmup) de IP/domínio.
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await coffeemail.domains.getWarmupStatus('dom_123');
+   * ```
+   */
+  public async getWarmupStatus(id: string): Promise<CoffeeMailResponse<DomainWarmupStatus | null>> {
+    return this.http.get<DomainWarmupStatus | null>(`/v1/product/domains/${id}/warmup`);
   }
 }

@@ -3,6 +3,7 @@ import { Buffer } from 'node:buffer';
 import type { HttpClient } from '../core/http-client.js';
 import type { CoffeeMailResponse } from '../core/types.js';
 import type {
+  BatchSendEmailResult,
   EmailAddressInput,
   EmailAttachment,
   EmailDetail,
@@ -10,6 +11,7 @@ import type {
   EmailParticipant,
   ListEmailsQuery,
   ListEmailsResponse,
+  ListEmailTagsResponse,
   SendEmailPayload,
   SendEmailResponse,
 } from '../types/emails.types.js';
@@ -127,8 +129,6 @@ const formatSendBody = (payload: SendEmailPayload): Record<string, unknown> => {
     body['scheduledAt'] = scheduledAt;
   }
 
-  // `isSandbox` aceita `false` como valor válido, então a regra de presença é
-  // `!== undefined` (e não `isPresent`, que rejeitaria `false`).
   if (payload.isSandbox !== undefined) {
     body['isSandbox'] = payload.isSandbox;
   }
@@ -172,12 +172,9 @@ export class Emails {
    */
   public async sendBatch(
     items: ReadonlyArray<SendEmailPayload>
-  ): Promise<CoffeeMailResponse<{ readonly data: ReadonlyArray<SendEmailResponse> }>> {
+  ): Promise<CoffeeMailResponse<ReadonlyArray<BatchSendEmailResult>>> {
     const formatted = items.map(formatSendBody);
-    return this.http.post<{ readonly data: ReadonlyArray<SendEmailResponse> }>(
-      '/v1/product/emails/batch',
-      formatted
-    );
+    return this.http.post<ReadonlyArray<BatchSendEmailResult>>('/v1/product/emails/batch', formatted);
   }
 
   /**
@@ -220,17 +217,28 @@ export class Emails {
   }
 
   /**
-   * Cancela o envio de um e-mail previamente agendado (`scheduled`).
+   * Retorna as tags distintas já usadas em e-mails enviados pela organização.
    *
    * @example
    * ```typescript
-   * const { data, error } = await coffeemail.emails.cancel('eml_8f92b7c4');
+   * const { data, error } = await coffeemail.emails.getTags();
    * ```
    */
-  public async cancel(id: string): Promise<CoffeeMailResponse<{ readonly id: string; readonly status: string }>> {
-    return this.http.post<{ readonly id: string; readonly status: string }>(
-      `/v1/product/emails/${id}/cancel`
-    );
+  public async getTags(): Promise<CoffeeMailResponse<ListEmailTagsResponse>> {
+    return this.http.get<ListEmailTagsResponse>('/v1/product/emails/tags');
+  }
+
+  /**
+   * Cancela o envio de um e-mail previamente agendado (`scheduled`).
+   * Não retorna corpo na resposta (204 No Content).
+   *
+   * @example
+   * ```typescript
+   * const { error } = await coffeemail.emails.cancel('eml_8f92b7c4');
+   * ```
+   */
+  public async cancel(id: string): Promise<CoffeeMailResponse<void>> {
+    return this.http.post<void>(`/v1/product/emails/${id}/cancel`);
   }
 
   /**

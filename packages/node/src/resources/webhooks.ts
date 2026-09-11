@@ -4,6 +4,16 @@ import type { HttpClient } from '../core/http-client.js';
 import type { CoffeeMailResponse } from '../core/types.js';
 import type {
   CreateWebhookPayload,
+  CreatedWebhookDetail,
+  ListWebhookDeliveriesQuery,
+  ListWebhookDeliveriesResponse,
+  ListWebhooksQuery,
+  ListWebhooksResponse,
+  RotateWebhookSecretResult,
+  TestWebhookResult,
+  ToggleWebhookPayload,
+  ToggleWebhookResult,
+  UpdateWebhookPayload,
   VerifyWebhookSignatureOptions,
   WebhookDetail,
 } from '../types/webhooks.types.js';
@@ -26,8 +36,8 @@ export class Webhooks {
    * });
    * ```
    */
-  public async create(payload: CreateWebhookPayload): Promise<CoffeeMailResponse<WebhookDetail>> {
-    return this.http.post<WebhookDetail>('/v1/product/webhooks', payload);
+  public async create(payload: CreateWebhookPayload): Promise<CoffeeMailResponse<CreatedWebhookDetail>> {
+    return this.http.post<CreatedWebhookDetail>('/v1/product/webhooks', payload);
   }
 
   /**
@@ -36,10 +46,14 @@ export class Webhooks {
    * @example
    * ```typescript
    * const { data, error } = await coffeemail.webhooks.list();
+   * console.log(data?.webhooks);
    * ```
    */
-  public async list(): Promise<CoffeeMailResponse<ReadonlyArray<WebhookDetail>>> {
-    return this.http.get<ReadonlyArray<WebhookDetail>>('/v1/product/webhooks');
+  public async list(query?: ListWebhooksQuery): Promise<CoffeeMailResponse<ListWebhooksResponse>> {
+    return this.http.get<ListWebhooksResponse>(
+      '/v1/product/webhooks',
+      query as Record<string, string | number>
+    );
   }
 
   /**
@@ -66,21 +80,64 @@ export class Webhooks {
    */
   public async update(
     id: string,
-    payload: Partial<CreateWebhookPayload>
+    payload: UpdateWebhookPayload
   ): Promise<CoffeeMailResponse<WebhookDetail>> {
     return this.http.put<WebhookDetail>(`/v1/product/webhooks/${id}`, payload);
   }
 
   /**
-   * Remove um webhook da organização.
+   * Ativa ou pausa um webhook, sem alterar url, events ou description.
    *
    * @example
    * ```typescript
-   * const { data, error } = await coffeemail.webhooks.delete('wh_123');
+   * const { data, error } = await coffeemail.webhooks.toggle('wh_123', { status: 'paused' });
    * ```
    */
-  public async delete(id: string): Promise<CoffeeMailResponse<{ readonly id: string; readonly deleted: boolean }>> {
-    return this.http.delete<{ readonly id: string; readonly deleted: boolean }>(`/v1/product/webhooks/${id}`);
+  public async toggle(id: string, payload: ToggleWebhookPayload): Promise<CoffeeMailResponse<ToggleWebhookResult>> {
+    return this.http.patch<ToggleWebhookResult>(`/v1/product/webhooks/${id}`, payload);
+  }
+
+  /**
+   * Remove um webhook da organização. Não retorna corpo na resposta (204 No Content).
+   *
+   * @example
+   * ```typescript
+   * const { error } = await coffeemail.webhooks.delete('wh_123');
+   * ```
+   */
+  public async delete(id: string): Promise<CoffeeMailResponse<void>> {
+    return this.http.delete<void>(`/v1/product/webhooks/${id}`);
+  }
+
+  /**
+   * Gera um novo segredo HMAC para o webhook, invalidando o anterior.
+   * O valor completo só é retornado nesta resposta — guarde-o com segurança.
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await coffeemail.webhooks.rotateSecret('wh_123');
+   * ```
+   */
+  public async rotateSecret(id: string): Promise<CoffeeMailResponse<RotateWebhookSecretResult>> {
+    return this.http.post<RotateWebhookSecretResult>(`/v1/product/webhooks/${id}/rotate-secret`);
+  }
+
+  /**
+   * Lista as tentativas de entrega de eventos para um webhook.
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await coffeemail.webhooks.listDeliveries('wh_123', { status: 'failed' });
+   * ```
+   */
+  public async listDeliveries(
+    id: string,
+    query?: ListWebhookDeliveriesQuery
+  ): Promise<CoffeeMailResponse<ListWebhookDeliveriesResponse>> {
+    return this.http.get<ListWebhookDeliveriesResponse>(
+      `/v1/product/webhooks/${id}/deliveries`,
+      query as Record<string, string | number>
+    );
   }
 
   /**
@@ -91,10 +148,8 @@ export class Webhooks {
    * const { data, error } = await coffeemail.webhooks.test('wh_123');
    * ```
    */
-  public async test(id: string): Promise<CoffeeMailResponse<{ readonly success: boolean; readonly statusCode?: number }>> {
-    return this.http.post<{ readonly success: boolean; readonly statusCode?: number }>(
-      `/v1/product/webhooks/${id}/test`
-    );
+  public async test(id: string): Promise<CoffeeMailResponse<TestWebhookResult>> {
+    return this.http.post<TestWebhookResult>(`/v1/product/webhooks/${id}/test`);
   }
 
   /**

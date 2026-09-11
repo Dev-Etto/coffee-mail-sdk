@@ -1,27 +1,75 @@
+export type BroadcastStatus = 'draft' | 'scheduled' | 'sending' | 'sent' | 'failed' | 'cancelled';
+
+/**
+ * Uma campanha (broadcast) enviada a uma audiência.
+ */
 export interface BroadcastDetail {
   readonly id: string;
   readonly audienceId: string;
-  readonly templateId?: string;
+  readonly audienceName: string | null;
+  readonly templateId: string | null;
   readonly subject: string;
   readonly fromEmail: string;
-  readonly replyTo?: string;
-  readonly status: 'draft' | 'sending' | 'sent' | 'cancelled';
+  readonly replyTo: string | null;
+  readonly status: BroadcastStatus;
+  readonly scheduledAt: string | null;
+  readonly sentAt: string | null;
+  readonly cancelledAt: string | null;
   readonly recipientsTotal: number;
   readonly recipientsQueued: number;
   readonly recipientsFailed: number;
-  readonly scheduledAt?: string | null;
-  readonly sentAt?: string | null;
   readonly createdAt: string;
+  readonly updatedAt: string;
 }
 
-export interface CreateBroadcastPayload {
-  readonly audienceId: string;
-  readonly fromEmail: string;
-  readonly subject?: string;
-  readonly templateId?: string;
-  readonly html?: string;
-  readonly text?: string;
-  readonly replyTo?: string;
-  readonly scheduledAt?: Date | string;
-  readonly variables?: Record<string, unknown>;
+export interface ListBroadcastsResponse {
+  readonly broadcasts: ReadonlyArray<BroadcastDetail>;
+  readonly nextCursor: string | null;
 }
+
+export interface ListBroadcastsQuery {
+  readonly status?: BroadcastStatus;
+  readonly from?: string;
+  readonly to?: string;
+  readonly after?: string;
+  readonly limit?: number;
+}
+
+export interface SendBroadcastResult {
+  readonly id: string;
+  readonly status: BroadcastStatus;
+  readonly recipientsTotal: number;
+  readonly recipientsQueued: number;
+}
+
+export interface CancelBroadcastResult {
+  readonly id: string;
+  readonly status: BroadcastStatus;
+  readonly cancelledAt: string | null;
+}
+
+/**
+ * Payload para criar uma campanha. É preciso fornecer exatamente um de
+ * `templateId` ou `html` (a API rejeita ambos ou nenhum). `subject` é
+ * obrigatório apenas quando `html` é usado (templates já têm assunto padrão).
+ */
+export type CreateBroadcastPayload =
+  | {
+      readonly audienceId: string;
+      readonly fromEmail: string;
+      readonly templateId: string;
+      readonly subject?: string;
+      readonly replyTo?: string;
+      readonly scheduledAt?: Date | string;
+      readonly variables?: Record<string, unknown>;
+    }
+  | {
+      readonly audienceId: string;
+      readonly fromEmail: string;
+      readonly html: string;
+      readonly subject: string;
+      readonly text?: string;
+      readonly replyTo?: string;
+      readonly scheduledAt?: Date | string;
+      readonly variables?: Record<string, unknown>;
+    };

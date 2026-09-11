@@ -57,6 +57,18 @@ export interface EmailTag {
   readonly value: string;
 }
 
+export type EmailStatus =
+  | 'queued'
+  | 'processing'
+  | 'sent'
+  | 'delivered'
+  | 'bounced'
+  | 'complained'
+  | 'failed'
+  | 'skipped'
+  | 'scheduled'
+  | 'cancelled';
+
 /**
  * Parâmetros de entrada para envio de e-mail transacional.
  */
@@ -92,10 +104,10 @@ export interface SendEmailPayload {
   readonly replyTo?: EmailAddressInput;
 
   /**
-   * Assunto do e-mail.
+   * Assunto do e-mail. Obrigatório quando não há `templateId`.
    * @example "Seu pedido foi confirmado!"
    */
-  readonly subject: string;
+  readonly subject?: string;
 
   /**
    * Conteúdo em formato HTML.
@@ -109,7 +121,7 @@ export interface SendEmailPayload {
   readonly text?: string;
 
   /**
-   * ID de um modelo pré-cadastrado na plataforma.
+   * ID de um modelo pré-cadastrado na plataforma. Não pode ser usado junto com `html`/`text`.
    */
   readonly templateId?: string;
 
@@ -144,6 +156,16 @@ export interface SendEmailPayload {
   readonly idempotencyKey?: string;
 
   /**
+   * Classifica o e-mail como transacional ou broadcast para fins de supressão/relatórios.
+   */
+  readonly emailType?: 'transactional' | 'broadcast';
+
+  /**
+   * Categoria de supressão a considerar no envio.
+   */
+  readonly suppressionCategory?: string;
+
+  /**
    * Se verdadeiro, o e-mail não é entregue de fato, simulando entrega para testes (sandbox).
    */
   readonly isSandbox?: boolean;
@@ -153,18 +175,21 @@ export interface SendEmailPayload {
  * Resposta de sucesso ao enfileirar um e-mail.
  */
 export interface SendEmailResponse {
-  /**
-   * Identificador único do e-mail gerado pelo CoffeeMail.
-   */
   readonly id: string;
-  /**
-   * Status inicial ('queued' ou 'scheduled').
-   */
   readonly status: 'queued' | 'scheduled';
-  /**
-   * Data e hora em que a mensagem entrou na fila.
-   */
   readonly queuedAt: string;
+}
+
+/**
+ * Resultado de um item dentro de um envio em lote (`sendBatch`).
+ */
+export type BatchSendEmailResult =
+  | { readonly ok: true; readonly data: SendEmailResponse }
+  | { readonly ok: false; readonly error: string };
+
+export interface ApiKeyRef {
+  readonly id: string;
+  readonly name: string;
 }
 
 /**
@@ -174,30 +199,32 @@ export interface EmailDetail {
   readonly id: string;
   readonly from: string;
   readonly to: ReadonlyArray<string>;
-  readonly cc?: ReadonlyArray<string>;
-  readonly bcc?: ReadonlyArray<string>;
-  readonly replyTo?: string;
-  readonly subject: string;
-  readonly status:
-    | 'queued'
-    | 'scheduled'
-    | 'processing'
-    | 'sent'
-    | 'delivered'
-    | 'failed'
-    | 'bounced'
-    | 'complained'
-    | 'skipped'
-    | 'cancelled';
-  readonly html?: string;
-  readonly text?: string;
-  readonly lastError?: string;
+  readonly cc: ReadonlyArray<string> | null;
+  readonly bcc: ReadonlyArray<string> | null;
+  readonly subject: string | null;
+  readonly status: EmailStatus;
+  readonly attempts: number;
+  readonly lastError: string | null;
+  readonly messageId: string | null;
   readonly createdAt: string;
-  readonly sentAt?: string;
-  readonly deliveredAt?: string;
-  readonly failedAt?: string;
-  readonly scheduledAt?: string;
-  readonly tags?: ReadonlyArray<EmailTag>;
+  readonly scheduledAt: string | null;
+  readonly sentAt: string | null;
+  readonly deliveredAt: string | null;
+  readonly bouncedAt: string | null;
+  readonly failedAt: string | null;
+  readonly complainedAt: string | null;
+  readonly suppressedAt: string | null;
+  readonly openedAt: string | null;
+  readonly firstClickedAt: string | null;
+  readonly openCount: number;
+  readonly clickCount: number;
+  readonly tags: ReadonlyArray<EmailTag> | null;
+  readonly html: string | null;
+  readonly text: string | null;
+  /**
+   * Só aparece na listagem (`list()`), ausente no detalhe (`get()`).
+   */
+  readonly apiKey?: ApiKeyRef | null;
 }
 
 /**
@@ -205,25 +232,45 @@ export interface EmailDetail {
  */
 export interface ListEmailsQuery {
   /**
-   * Quantidade máxima de registros a retornar (padrão: 20, máx: 100).
+   * Filtra por status de envio.
    */
-  readonly limit?: number;
+  readonly status?: EmailStatus;
   /**
-   * Deslocamento da paginação (offset).
+   * Busca parcial por destinatário em to/cc/bcc.
    */
-  readonly offset?: number;
+  readonly recipient?: string;
   /**
-   * Filtrar por status específico.
+   * Filtra por endereço do remetente.
    */
-  readonly status?: EmailDetail['status'];
+  readonly fromEmail?: string;
   /**
-   * Filtrar por endereço de remetente.
+   * Busca parcial no assunto do e-mail.
+   */
+  readonly subjectContains?: string;
+  /**
+   * Filtra e-mails enviados por uma API key específica.
+   */
+  readonly apiKeyId?: string;
+  /**
+   * Filtra e-mails que possuem esta tag.
+   */
+  readonly tag?: string;
+  /**
+   * Data/hora inicial do período de busca (ISO 8601) — NÃO é um endereço de e-mail.
    */
   readonly from?: string;
   /**
-   * Filtrar por endereço de destinatário.
+   * Data/hora final do período de busca (ISO 8601) — NÃO é um endereço de e-mail.
    */
   readonly to?: string;
+  /**
+   * Cursor de paginação para buscar os próximos registros.
+   */
+  readonly after?: string;
+  /**
+   * Quantidade máxima de e-mails retornados (padrão 50, máximo 100).
+   */
+  readonly limit?: number;
 }
 
 /**
@@ -231,20 +278,28 @@ export interface ListEmailsQuery {
  */
 export interface ListEmailsResponse {
   readonly emails: ReadonlyArray<EmailDetail>;
-  readonly total: number;
-  readonly hasMore: boolean;
+  readonly nextCursor: string | null;
+}
+
+export interface EmailTagsSummary {
+  readonly name: string;
+  readonly values: ReadonlyArray<string>;
+}
+
+export interface ListEmailTagsResponse {
+  readonly tags: ReadonlyArray<EmailTagsSummary>;
 }
 
 /**
  * Evento individual da linha do tempo do e-mail.
  */
 export interface EmailTimelineEvent {
-  readonly id: string;
   readonly type: string;
   readonly timestamp: string;
-  readonly details?: unknown;
+  readonly metadata?: Record<string, unknown>;
 }
 
 export interface EmailEventsResponse {
+  readonly id: string;
   readonly events: ReadonlyArray<EmailTimelineEvent>;
 }
