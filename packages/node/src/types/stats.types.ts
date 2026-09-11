@@ -21,12 +21,12 @@ export interface GetStatsQuery {
   /**
    * Agrupamento dos dados: dia, semana ou mês. Padrão: 'day'.
    */
-  readonly granularity?: 'day' | 'week' | 'month';
+  readonly granularity?: "day" | "week" | "month";
   /**
    * Atalho para intervalo relativo (últimos 7/30/90 dias). Quando informado,
    * substitui startDate/endDate calculados pela API.
    */
-  readonly period?: 'last7d' | 'last30d' | 'last90d';
+  readonly period?: "last7d" | "last30d" | "last90d";
 }
 
 /**

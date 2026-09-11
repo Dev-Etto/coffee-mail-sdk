@@ -1,5 +1,5 @@
-import type { HttpClient } from '../core/http-client.js';
-import type { CoffeeMailResponse } from '../core/types.js';
+import type { HttpClient } from "../core/http-client.js";
+import type { CoffeeMailResponse } from "../core/types.js";
 import type {
   CreateDomainPayload,
   CreateDomainResponse,
@@ -9,7 +9,7 @@ import type {
   DomainWarmupStatus,
   ListDomainsResponse,
   VerifyDomainResponse,
-} from '../types/domains.types.js';
+} from "../types/domains.types.js";
 
 /**
  * Recurso de gerenciamento e verificação de domínios na plataforma CoffeeMail.
@@ -30,8 +30,10 @@ export class Domains {
    * }
    * ```
    */
-  public async create(payload: CreateDomainPayload): Promise<CoffeeMailResponse<CreateDomainResponse>> {
-    return this.http.post<CreateDomainResponse>('/v1/product/domains', payload);
+  public async create(
+    payload: CreateDomainPayload,
+  ): Promise<CoffeeMailResponse<CreateDomainResponse>> {
+    return this.http.post<CreateDomainResponse>("/v1/product/domains", payload);
   }
 
   /**
@@ -44,7 +46,7 @@ export class Domains {
    * ```
    */
   public async list(): Promise<CoffeeMailResponse<ListDomainsResponse>> {
-    return this.http.get<ListDomainsResponse>('/v1/product/domains');
+    return this.http.get<ListDomainsResponse>("/v1/product/domains");
   }
 
   /**
@@ -70,8 +72,12 @@ export class Domains {
    * }
    * ```
    */
-  public async verify(id: string): Promise<CoffeeMailResponse<VerifyDomainResponse>> {
-    return this.http.post<VerifyDomainResponse>(`/v1/product/domains/${id}/verify`);
+  public async verify(
+    id: string,
+  ): Promise<CoffeeMailResponse<VerifyDomainResponse>> {
+    return this.http.post<VerifyDomainResponse>(
+      `/v1/product/domains/${id}/verify`,
+    );
   }
 
   /**
@@ -82,7 +88,9 @@ export class Domains {
    * const { data, error } = await coffeemail.domains.delete('dom_123');
    * ```
    */
-  public async delete(id: string): Promise<CoffeeMailResponse<DeleteDomainResponse>> {
+  public async delete(
+    id: string,
+  ): Promise<CoffeeMailResponse<DeleteDomainResponse>> {
     return this.http.delete<DeleteDomainResponse>(`/v1/product/domains/${id}`);
   }
 
@@ -94,8 +102,12 @@ export class Domains {
    * const { data, error } = await coffeemail.domains.getHealth('dom_123');
    * ```
    */
-  public async getHealth(id: string): Promise<CoffeeMailResponse<DomainHealthResponse>> {
-    return this.http.post<DomainHealthResponse>(`/v1/product/domains/${id}/health`);
+  public async getHealth(
+    id: string,
+  ): Promise<CoffeeMailResponse<DomainHealthResponse>> {
+    return this.http.post<DomainHealthResponse>(
+      `/v1/product/domains/${id}/health`,
+    );
   }
 
   /**
@@ -106,7 +118,11 @@ export class Domains {
    * const { data, error } = await coffeemail.domains.getWarmupStatus('dom_123');
    * ```
    */
-  public async getWarmupStatus(id: string): Promise<CoffeeMailResponse<DomainWarmupStatus | null>> {
-    return this.http.get<DomainWarmupStatus | null>(`/v1/product/domains/${id}/warmup`);
+  public async getWarmupStatus(
+    id: string,
+  ): Promise<CoffeeMailResponse<DomainWarmupStatus | null>> {
+    return this.http.get<DomainWarmupStatus | null>(
+      `/v1/product/domains/${id}/warmup`,
+    );
   }
 }

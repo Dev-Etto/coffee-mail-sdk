@@ -1,7 +1,7 @@
-import { Buffer } from 'node:buffer';
+import { Buffer } from "node:buffer";
 
-import type { HttpClient } from '../core/http-client.js';
-import type { CoffeeMailResponse } from '../core/types.js';
+import type { HttpClient } from "../core/http-client.js";
+import type { CoffeeMailResponse } from "../core/types.js";
 import type {
   BatchSendEmailResult,
   EmailAddressInput,
@@ -14,7 +14,7 @@ import type {
   ListEmailTagsResponse,
   SendEmailPayload,
   SendEmailResponse,
-} from '../types/emails.types.js';
+} from "../types/emails.types.js";
 
 /**
  * Retorna `true` para valores "presentes" no payload: não-undefined, não-vazio para
@@ -23,20 +23,23 @@ import type {
  */
 const isPresent = (value: unknown): boolean => {
   if (value === undefined || value === null) return false;
-  if (typeof value === 'string') return value.length > 0;
+  if (typeof value === "string") return value.length > 0;
   if (Array.isArray(value)) return value.length > 0;
   return true;
 };
 
 const normalizeParticipant = (input: EmailAddressInput): EmailParticipant => {
-  if (typeof input === 'string') {
+  if (typeof input === "string") {
     return { email: input.trim() };
   }
-  return { email: input.email.trim(), ...(input.name ? { name: input.name.trim() } : {}) };
+  return {
+    email: input.email.trim(),
+    ...(input.name ? { name: input.name.trim() } : {}),
+  };
 };
 
 const normalizeList = (
-  input?: EmailAddressInput | ReadonlyArray<EmailAddressInput>
+  input?: EmailAddressInput | ReadonlyArray<EmailAddressInput>,
 ): EmailParticipant[] | undefined => {
   if (!input) return undefined;
   if (Array.isArray(input)) {
@@ -46,20 +49,20 @@ const normalizeList = (
 };
 
 const serializeAttachment = (
-  attachment: EmailAttachment
+  attachment: EmailAttachment,
 ): Record<string, unknown> => {
   const content =
-    typeof attachment.content === 'string'
+    typeof attachment.content === "string"
       ? attachment.content
       : Buffer.isBuffer(attachment.content)
-        ? attachment.content.toString('base64')
+        ? attachment.content.toString("base64")
         : String(attachment.content);
 
   return {
     filename: attachment.filename,
     content,
-    contentType: attachment.contentType ?? 'application/octet-stream',
-    disposition: attachment.disposition ?? 'attachment',
+    contentType: attachment.contentType ?? "application/octet-stream",
+    disposition: attachment.disposition ?? "attachment",
     ...(attachment.cid ? { cid: attachment.cid } : {}),
   };
 };
@@ -67,7 +70,9 @@ const serializeAttachment = (
 /**
  * Converte `scheduledAt` (Date | ISO string) para ISO 8601. Retorna `undefined` se ausente.
  */
-const normalizeScheduledAt = (value: Date | string | undefined): string | undefined => {
+const normalizeScheduledAt = (
+  value: Date | string | undefined,
+): string | undefined => {
   if (value === undefined) return undefined;
   return value instanceof Date ? value.toISOString() : value;
 };
@@ -95,17 +100,35 @@ type PayloadEntry = {
 };
 
 const PAYLOAD_ENTRIES: ReadonlyArray<PayloadEntry> = [
-  { source: 'cc', target: 'cc', map: (v) => normalizeList(v as EmailAddressInput | ReadonlyArray<EmailAddressInput>) },
-  { source: 'bcc', target: 'bcc', map: (v) => normalizeList(v as EmailAddressInput | ReadonlyArray<EmailAddressInput>) },
-  { source: 'replyTo', target: 'replyTo', map: (v) => normalizeParticipant(v as EmailAddressInput) },
-  { source: 'html', target: 'html' },
-  { source: 'text', target: 'text' },
-  { source: 'templateId', target: 'templateId' },
-  { source: 'variables', target: 'variables' },
-  { source: 'headers', target: 'headers' },
-  { source: 'attachments', target: 'attachments', map: (v) => (v as ReadonlyArray<EmailAttachment>).map(serializeAttachment) },
-  { source: 'tags', target: 'tags' },
-  { source: 'idempotencyKey', target: 'idempotencyKey' },
+  {
+    source: "cc",
+    target: "cc",
+    map: (v) =>
+      normalizeList(v as EmailAddressInput | ReadonlyArray<EmailAddressInput>),
+  },
+  {
+    source: "bcc",
+    target: "bcc",
+    map: (v) =>
+      normalizeList(v as EmailAddressInput | ReadonlyArray<EmailAddressInput>),
+  },
+  {
+    source: "replyTo",
+    target: "replyTo",
+    map: (v) => normalizeParticipant(v as EmailAddressInput),
+  },
+  { source: "html", target: "html" },
+  { source: "text", target: "text" },
+  { source: "templateId", target: "templateId" },
+  { source: "variables", target: "variables" },
+  { source: "headers", target: "headers" },
+  {
+    source: "attachments",
+    target: "attachments",
+    map: (v) => (v as ReadonlyArray<EmailAttachment>).map(serializeAttachment),
+  },
+  { source: "tags", target: "tags" },
+  { source: "idempotencyKey", target: "idempotencyKey" },
 ];
 
 const formatSendBody = (payload: SendEmailPayload): Record<string, unknown> => {
@@ -126,11 +149,11 @@ const formatSendBody = (payload: SendEmailPayload): Record<string, unknown> => {
 
   const scheduledAt = normalizeScheduledAt(payload.scheduledAt);
   if (scheduledAt !== undefined) {
-    body['scheduledAt'] = scheduledAt;
+    body["scheduledAt"] = scheduledAt;
   }
 
   if (payload.isSandbox !== undefined) {
-    body['isSandbox'] = payload.isSandbox;
+    body["isSandbox"] = payload.isSandbox;
   }
 
   return body;
@@ -155,8 +178,13 @@ export class Emails {
    * });
    * ```
    */
-  public async send(payload: SendEmailPayload): Promise<CoffeeMailResponse<SendEmailResponse>> {
-    return this.http.post<SendEmailResponse>('/v1/product/emails', formatSendBody(payload));
+  public async send(
+    payload: SendEmailPayload,
+  ): Promise<CoffeeMailResponse<SendEmailResponse>> {
+    return this.http.post<SendEmailResponse>(
+      "/v1/product/emails",
+      formatSendBody(payload),
+    );
   }
 
   /**
@@ -171,10 +199,13 @@ export class Emails {
    * ```
    */
   public async sendBatch(
-    items: ReadonlyArray<SendEmailPayload>
+    items: ReadonlyArray<SendEmailPayload>,
   ): Promise<CoffeeMailResponse<ReadonlyArray<BatchSendEmailResult>>> {
     const formatted = items.map(formatSendBody);
-    return this.http.post<ReadonlyArray<BatchSendEmailResult>>('/v1/product/emails/batch', formatted);
+    return this.http.post<ReadonlyArray<BatchSendEmailResult>>(
+      "/v1/product/emails/batch",
+      formatted,
+    );
   }
 
   /**
@@ -200,8 +231,13 @@ export class Emails {
    * const { data, error } = await coffeemail.emails.list({ limit: 50, status: 'delivered' });
    * ```
    */
-  public async list(query?: ListEmailsQuery): Promise<CoffeeMailResponse<ListEmailsResponse>> {
-    return this.http.get<ListEmailsResponse>('/v1/product/emails', query as Record<string, string | number>);
+  public async list(
+    query?: ListEmailsQuery,
+  ): Promise<CoffeeMailResponse<ListEmailsResponse>> {
+    return this.http.get<ListEmailsResponse>(
+      "/v1/product/emails",
+      query as Record<string, string | number>,
+    );
   }
 
   /**
@@ -212,8 +248,12 @@ export class Emails {
    * const { data, error } = await coffeemail.emails.getEvents('eml_8f92b7c4');
    * ```
    */
-  public async getEvents(id: string): Promise<CoffeeMailResponse<EmailEventsResponse>> {
-    return this.http.get<EmailEventsResponse>(`/v1/product/emails/${id}/events`);
+  public async getEvents(
+    id: string,
+  ): Promise<CoffeeMailResponse<EmailEventsResponse>> {
+    return this.http.get<EmailEventsResponse>(
+      `/v1/product/emails/${id}/events`,
+    );
   }
 
   /**
@@ -225,7 +265,7 @@ export class Emails {
    * ```
    */
   public async getTags(): Promise<CoffeeMailResponse<ListEmailTagsResponse>> {
-    return this.http.get<ListEmailTagsResponse>('/v1/product/emails/tags');
+    return this.http.get<ListEmailTagsResponse>("/v1/product/emails/tags");
   }
 
   /**
@@ -249,7 +289,9 @@ export class Emails {
    * const { data, error } = await coffeemail.emails.resend('eml_8f92b7c4');
    * ```
    */
-  public async resend(id: string): Promise<CoffeeMailResponse<SendEmailResponse>> {
+  public async resend(
+    id: string,
+  ): Promise<CoffeeMailResponse<SendEmailResponse>> {
     return this.http.post<SendEmailResponse>(`/v1/product/emails/${id}/resend`);
   }
 }

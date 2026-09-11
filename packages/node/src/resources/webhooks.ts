@@ -1,7 +1,7 @@
-import { createHmac, timingSafeEqual } from 'node:crypto';
+import { createHmac, timingSafeEqual } from "node:crypto";
 
-import type { HttpClient } from '../core/http-client.js';
-import type { CoffeeMailResponse } from '../core/types.js';
+import type { HttpClient } from "../core/http-client.js";
+import type { CoffeeMailResponse } from "../core/types.js";
 import type {
   CreateWebhookPayload,
   CreatedWebhookDetail,
@@ -16,7 +16,7 @@ import type {
   UpdateWebhookPayload,
   VerifyWebhookSignatureOptions,
   WebhookDetail,
-} from '../types/webhooks.types.js';
+} from "../types/webhooks.types.js";
 
 /**
  * Recurso de gerenciamento e verificação criptográfica de Webhooks do CoffeeMail.
@@ -36,8 +36,13 @@ export class Webhooks {
    * });
    * ```
    */
-  public async create(payload: CreateWebhookPayload): Promise<CoffeeMailResponse<CreatedWebhookDetail>> {
-    return this.http.post<CreatedWebhookDetail>('/v1/product/webhooks', payload);
+  public async create(
+    payload: CreateWebhookPayload,
+  ): Promise<CoffeeMailResponse<CreatedWebhookDetail>> {
+    return this.http.post<CreatedWebhookDetail>(
+      "/v1/product/webhooks",
+      payload,
+    );
   }
 
   /**
@@ -49,10 +54,12 @@ export class Webhooks {
    * console.log(data?.webhooks);
    * ```
    */
-  public async list(query?: ListWebhooksQuery): Promise<CoffeeMailResponse<ListWebhooksResponse>> {
+  public async list(
+    query?: ListWebhooksQuery,
+  ): Promise<CoffeeMailResponse<ListWebhooksResponse>> {
     return this.http.get<ListWebhooksResponse>(
-      '/v1/product/webhooks',
-      query as Record<string, string | number>
+      "/v1/product/webhooks",
+      query as Record<string, string | number>,
     );
   }
 
@@ -80,7 +87,7 @@ export class Webhooks {
    */
   public async update(
     id: string,
-    payload: UpdateWebhookPayload
+    payload: UpdateWebhookPayload,
   ): Promise<CoffeeMailResponse<WebhookDetail>> {
     return this.http.put<WebhookDetail>(`/v1/product/webhooks/${id}`, payload);
   }
@@ -93,8 +100,14 @@ export class Webhooks {
    * const { data, error } = await coffeemail.webhooks.toggle('wh_123', { status: 'paused' });
    * ```
    */
-  public async toggle(id: string, payload: ToggleWebhookPayload): Promise<CoffeeMailResponse<ToggleWebhookResult>> {
-    return this.http.patch<ToggleWebhookResult>(`/v1/product/webhooks/${id}`, payload);
+  public async toggle(
+    id: string,
+    payload: ToggleWebhookPayload,
+  ): Promise<CoffeeMailResponse<ToggleWebhookResult>> {
+    return this.http.patch<ToggleWebhookResult>(
+      `/v1/product/webhooks/${id}`,
+      payload,
+    );
   }
 
   /**
@@ -118,8 +131,12 @@ export class Webhooks {
    * const { data, error } = await coffeemail.webhooks.rotateSecret('wh_123');
    * ```
    */
-  public async rotateSecret(id: string): Promise<CoffeeMailResponse<RotateWebhookSecretResult>> {
-    return this.http.post<RotateWebhookSecretResult>(`/v1/product/webhooks/${id}/rotate-secret`);
+  public async rotateSecret(
+    id: string,
+  ): Promise<CoffeeMailResponse<RotateWebhookSecretResult>> {
+    return this.http.post<RotateWebhookSecretResult>(
+      `/v1/product/webhooks/${id}/rotate-secret`,
+    );
   }
 
   /**
@@ -132,11 +149,11 @@ export class Webhooks {
    */
   public async listDeliveries(
     id: string,
-    query?: ListWebhookDeliveriesQuery
+    query?: ListWebhookDeliveriesQuery,
   ): Promise<CoffeeMailResponse<ListWebhookDeliveriesResponse>> {
     return this.http.get<ListWebhookDeliveriesResponse>(
       `/v1/product/webhooks/${id}/deliveries`,
-      query as Record<string, string | number>
+      query as Record<string, string | number>,
     );
   }
 
@@ -148,7 +165,9 @@ export class Webhooks {
    * const { data, error } = await coffeemail.webhooks.test('wh_123');
    * ```
    */
-  public async test(id: string): Promise<CoffeeMailResponse<TestWebhookResult>> {
+  public async test(
+    id: string,
+  ): Promise<CoffeeMailResponse<TestWebhookResult>> {
     return this.http.post<TestWebhookResult>(`/v1/product/webhooks/${id}/test`);
   }
 
@@ -177,7 +196,9 @@ export class Webhooks {
   /**
    * Método estático auxiliar para validação de assinatura sem necessidade de instanciar o cliente.
    */
-  public static verifySignature(options: VerifyWebhookSignatureOptions): boolean {
+  public static verifySignature(
+    options: VerifyWebhookSignatureOptions,
+  ): boolean {
     try {
       const { payload, signature, secret } = options;
       if (!signature || !secret || !payload) return false;
@@ -185,16 +206,18 @@ export class Webhooks {
       // `payload` pode chegar como `string`, `Buffer` (Node) ou `Uint8Array` (web).
       // Em todos os casos, transformamos para o raw body string que será hasheado.
       const rawString =
-        typeof payload === 'string'
+        typeof payload === "string"
           ? payload
           : Buffer.isBuffer(payload)
-            ? payload.toString('utf-8')
-            : new TextDecoder('utf-8').decode(payload);
+            ? payload.toString("utf-8")
+            : new TextDecoder("utf-8").decode(payload);
 
-      const computed = createHmac('sha256', secret).update(rawString).digest('hex');
+      const computed = createHmac("sha256", secret)
+        .update(rawString)
+        .digest("hex");
 
-      const expectedBuffer = Buffer.from(computed, 'utf-8');
-      const receivedBuffer = Buffer.from(signature, 'utf-8');
+      const expectedBuffer = Buffer.from(computed, "utf-8");
+      const receivedBuffer = Buffer.from(signature, "utf-8");
 
       if (expectedBuffer.length !== receivedBuffer.length) {
         return false;

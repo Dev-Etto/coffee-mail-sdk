@@ -1,33 +1,33 @@
-import type { BinaryData } from '../core/types.js';
+import type { BinaryData } from "../core/types.js";
 
 /**
  * Eventos emitidos pela plataforma CoffeeMail através de webhooks.
  */
 export type WebhookEventType =
-  | 'email.queued'
-  | 'email.processing'
-  | 'email.sent'
-  | 'email.delivered'
-  | 'email.delivery_delayed'
-  | 'email.opened'
-  | 'email.clicked'
-  | 'email.bounced'
-  | 'email.complained'
-  | 'email.failed'
-  | 'email.suppressed'
-  | 'email.scheduled'
-  | 'email.cancelled'
-  | 'email.unsubscribed'
-  | 'billing.plan_changed';
+  | "email.queued"
+  | "email.processing"
+  | "email.sent"
+  | "email.delivered"
+  | "email.delivery_delayed"
+  | "email.opened"
+  | "email.clicked"
+  | "email.bounced"
+  | "email.complained"
+  | "email.failed"
+  | "email.suppressed"
+  | "email.scheduled"
+  | "email.cancelled"
+  | "email.unsubscribed"
+  | "billing.plan_changed";
 
 /**
  * Situação de um webhook. `disabled` é atribuído pelo sistema (ex: após
  * falhas repetidas) e não pode ser definido diretamente via `toggle()`,
  * que só aceita `active`/`paused`.
  */
-export type WebhookStatus = 'active' | 'paused' | 'disabled';
+export type WebhookStatus = "active" | "paused" | "disabled";
 
-export type ToggleableWebhookStatus = 'active' | 'paused';
+export type ToggleableWebhookStatus = "active" | "paused";
 
 /**
  * Detalhes de um webhook, como retornado por `get()` e `update()`.
@@ -112,13 +112,14 @@ export interface RotateWebhookSecretResult {
 }
 
 export interface TestWebhookResult {
-  readonly status: 'success' | 'failed';
+  readonly status: "success" | "failed";
   readonly statusCode: number | null;
   readonly body: string | null;
   readonly error: string | null;
 }
 
-export type WebhookDeliveryStatus = 'pending' | 'success' | 'failed' | 'exhausted';
+export type WebhookDeliveryStatus =
+  "pending" | "success" | "failed" | "exhausted";
 
 export interface WebhookDelivery {
   readonly id: string;

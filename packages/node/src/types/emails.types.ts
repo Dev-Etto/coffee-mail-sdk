@@ -1,4 +1,4 @@
-import type { BinaryData } from '../core/types.js';
+import type { BinaryData } from "../core/types.js";
 
 /**
  * Objeto representando um endereço de e-mail com nome amigável opcional.
@@ -42,7 +42,7 @@ export interface EmailAttachment {
   /**
    * Modo de anexação: download convencional ('attachment') ou embutido ('inline').
    */
-  readonly disposition?: 'attachment' | 'inline';
+  readonly disposition?: "attachment" | "inline";
   /**
    * Content-ID para imagens embutidas no corpo HTML (cid:...).
    */
@@ -58,16 +58,16 @@ export interface EmailTag {
 }
 
 export type EmailStatus =
-  | 'queued'
-  | 'processing'
-  | 'sent'
-  | 'delivered'
-  | 'bounced'
-  | 'complained'
-  | 'failed'
-  | 'skipped'
-  | 'scheduled'
-  | 'cancelled';
+  | "queued"
+  | "processing"
+  | "sent"
+  | "delivered"
+  | "bounced"
+  | "complained"
+  | "failed"
+  | "skipped"
+  | "scheduled"
+  | "cancelled";
 
 /**
  * Parâmetros de entrada para envio de e-mail transacional.
@@ -158,7 +158,7 @@ export interface SendEmailPayload {
   /**
    * Classifica o e-mail como transacional ou broadcast para fins de supressão/relatórios.
    */
-  readonly emailType?: 'transactional' | 'broadcast';
+  readonly emailType?: "transactional" | "broadcast";
 
   /**
    * Categoria de supressão a considerar no envio.
@@ -176,7 +176,7 @@ export interface SendEmailPayload {
  */
 export interface SendEmailResponse {
   readonly id: string;
-  readonly status: 'queued' | 'scheduled';
+  readonly status: "queued" | "scheduled";
   readonly queuedAt: string;
 }
 

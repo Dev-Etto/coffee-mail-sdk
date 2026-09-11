@@ -1,5 +1,5 @@
-import type { CoffeeMailError } from './errors.js';
-import type { CoffeeMailLocale } from './i18n/types.js';
+import type { CoffeeMailError } from "./errors.js";
+import type { CoffeeMailLocale } from "./i18n/types.js";
 
 /**
  * Dados binários aceitos pelo SDK. Modelado como `string | Uint8Array` no contrato
@@ -69,9 +69,9 @@ export interface CoffeeMailClientOptions {
  */
 export interface HttpRequestOptions {
   readonly path: string;
-  readonly method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | undefined;
+  readonly method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | undefined;
   readonly body?: unknown | undefined;
-  readonly query?: Record<string, string | number | boolean | undefined | null> | undefined;
+  readonly query?:
+    Record<string, string | number | boolean | undefined | null> | undefined;
   readonly headers?: Record<string, string> | undefined;
 }
-

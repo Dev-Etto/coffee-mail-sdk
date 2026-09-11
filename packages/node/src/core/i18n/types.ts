@@ -1,4 +1,4 @@
-export type CoffeeMailLocale = 'pt-BR' | 'en';
+export type CoffeeMailLocale = "pt-BR" | "en";
 
 export interface I18nMessages {
   readonly missingApiKey: string;

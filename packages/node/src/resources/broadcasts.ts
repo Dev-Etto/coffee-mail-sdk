@@ -1,5 +1,5 @@
-import type { HttpClient } from '../core/http-client.js';
-import type { CoffeeMailResponse } from '../core/types.js';
+import type { HttpClient } from "../core/http-client.js";
+import type { CoffeeMailResponse } from "../core/types.js";
 import type {
   BroadcastDetail,
   CancelBroadcastResult,
@@ -7,13 +7,15 @@ import type {
   ListBroadcastsQuery,
   ListBroadcastsResponse,
   SendBroadcastResult,
-} from '../types/broadcasts.types.js';
+} from "../types/broadcasts.types.js";
 
 /**
  * Converte `scheduledAt` (Date | string | undefined) em string ISO 8601 ou undefined.
  * Mesmo helper usado em `emails.ts`, isolado para evitar dependência cruzada entre resources.
  */
-const normalizeScheduledAt = (value: Date | string | undefined): string | undefined => {
+const normalizeScheduledAt = (
+  value: Date | string | undefined,
+): string | undefined => {
   if (value === undefined) return undefined;
   return value instanceof Date ? value.toISOString() : value;
 };
@@ -21,19 +23,23 @@ const normalizeScheduledAt = (value: Date | string | undefined): string | undefi
 export class Broadcasts {
   constructor(private readonly http: HttpClient) {}
 
-  public async create(payload: CreateBroadcastPayload): Promise<CoffeeMailResponse<BroadcastDetail>> {
+  public async create(
+    payload: CreateBroadcastPayload,
+  ): Promise<CoffeeMailResponse<BroadcastDetail>> {
     const scheduledAt = normalizeScheduledAt(payload.scheduledAt);
 
-    return this.http.post<BroadcastDetail>('/v1/product/broadcasts', {
+    return this.http.post<BroadcastDetail>("/v1/product/broadcasts", {
       ...payload,
       ...(scheduledAt ? { scheduledAt } : {}),
     });
   }
 
-  public async list(query?: ListBroadcastsQuery): Promise<CoffeeMailResponse<ListBroadcastsResponse>> {
+  public async list(
+    query?: ListBroadcastsQuery,
+  ): Promise<CoffeeMailResponse<ListBroadcastsResponse>> {
     return this.http.get<ListBroadcastsResponse>(
-      '/v1/product/broadcasts',
-      query as Record<string, string | number>
+      "/v1/product/broadcasts",
+      query as Record<string, string | number>,
     );
   }
 
@@ -41,11 +47,19 @@ export class Broadcasts {
     return this.http.get<BroadcastDetail>(`/v1/product/broadcasts/${id}`);
   }
 
-  public async send(id: string): Promise<CoffeeMailResponse<SendBroadcastResult>> {
-    return this.http.post<SendBroadcastResult>(`/v1/product/broadcasts/${id}/send`);
+  public async send(
+    id: string,
+  ): Promise<CoffeeMailResponse<SendBroadcastResult>> {
+    return this.http.post<SendBroadcastResult>(
+      `/v1/product/broadcasts/${id}/send`,
+    );
   }
 
-  public async cancel(id: string): Promise<CoffeeMailResponse<CancelBroadcastResult>> {
-    return this.http.post<CancelBroadcastResult>(`/v1/product/broadcasts/${id}/cancel`);
+  public async cancel(
+    id: string,
+  ): Promise<CoffeeMailResponse<CancelBroadcastResult>> {
+    return this.http.post<CancelBroadcastResult>(
+      `/v1/product/broadcasts/${id}/cancel`,
+    );
   }
 }

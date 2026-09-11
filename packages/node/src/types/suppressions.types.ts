@@ -1,14 +1,14 @@
 export type SuppressionReason =
-  | 'manual'
-  | 'bounce'
-  | 'isp_block'
-  | 'mailbox_not_found'
-  | 'complaint'
-  | 'unsubscribe';
+  | "manual"
+  | "bounce"
+  | "isp_block"
+  | "mailbox_not_found"
+  | "complaint"
+  | "unsubscribe";
 
-export type SuppressionSource = 'manual' | 'auto';
+export type SuppressionSource = "manual" | "auto";
 
-export type SuppressionStatus = 'active' | 'expired' | 'inactive';
+export type SuppressionStatus = "active" | "expired" | "inactive";
 
 /**
  * Uma entrada na lista de supressão — um endereço que não deve receber e-mails.
@@ -32,7 +32,14 @@ export interface ListSuppressionsQuery {
   readonly status?: SuppressionStatus;
   readonly reason?: SuppressionReason;
   readonly source?: SuppressionSource;
-  readonly category?: 'manual' | 'bounce' | 'block' | 'complaint' | 'unsubscribe' | 'invalid_email' | 'global';
+  readonly category?:
+    | "manual"
+    | "bounce"
+    | "block"
+    | "complaint"
+    | "unsubscribe"
+    | "invalid_email"
+    | "global";
   /**
    * Cursor para a próxima página, retornado em `nextCursor`.
    */
@@ -55,6 +62,6 @@ export interface CreateSuppressionPayload {
    * motivos automáticos (isp_block, mailbox_not_found, unsubscribe) são
    * atribuídos pelo próprio sistema.
    */
-  readonly reason?: 'manual' | 'bounce' | 'complaint';
+  readonly reason?: "manual" | "bounce" | "complaint";
   readonly expiresAt?: string;
 }

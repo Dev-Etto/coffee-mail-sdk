@@ -49,7 +49,10 @@ export interface BulkAddContactsPayload {
 export interface BulkAddContactsResult {
   readonly inserted: number;
   readonly skipped: number;
-  readonly errors: ReadonlyArray<{ readonly email: string; readonly reason: string }>;
+  readonly errors: ReadonlyArray<{
+    readonly email: string;
+    readonly reason: string;
+  }>;
 }
 
 /**

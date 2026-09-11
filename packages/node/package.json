@@ -48,7 +48,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "generate:types": "node scripts/generate-types.mjs"
+    "generate:types": "node scripts/generate-types.mjs",
+    "prepublishOnly": "npm run build",
+    "release:public": "npm publish --access public"
   },
   "devDependencies": {
     "@types/node": "^22.20.1",

@@ -1,14 +1,14 @@
-import { HttpClient } from './core/http-client.js';
-import { Audiences } from './resources/audiences.js';
-import { Broadcasts } from './resources/broadcasts.js';
-import { Domains } from './resources/domains.js';
-import { Emails } from './resources/emails.js';
-import { Stats } from './resources/stats.js';
-import { Suppressions } from './resources/suppressions.js';
-import { Templates } from './resources/templates.js';
-import { Webhooks } from './resources/webhooks.js';
+import { HttpClient } from "./core/http-client.js";
+import { Audiences } from "./resources/audiences.js";
+import { Broadcasts } from "./resources/broadcasts.js";
+import { Domains } from "./resources/domains.js";
+import { Emails } from "./resources/emails.js";
+import { Stats } from "./resources/stats.js";
+import { Suppressions } from "./resources/suppressions.js";
+import { Templates } from "./resources/templates.js";
+import { Webhooks } from "./resources/webhooks.js";
 
-import type { CoffeeMailClientOptions } from './core/types.js';
+import type { CoffeeMailClientOptions } from "./core/types.js";
 
 /**
  * Cliente oficial do CoffeeMail para Node.js e TypeScript.
@@ -91,7 +91,9 @@ export class CoffeeMail {
   constructor(apiKey?: string, options: CoffeeMailClientOptions = {}) {
     const key =
       apiKey ??
-      (typeof process !== 'undefined' ? process.env?.['COFFEEMAIL_API_KEY'] : undefined);
+      (typeof process !== "undefined"
+        ? process.env?.["COFFEEMAIL_API_KEY"]
+        : undefined);
 
     this.http = new HttpClient(key, options);
 

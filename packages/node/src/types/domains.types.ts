@@ -2,7 +2,7 @@
  * Registro DNS que o cliente precisa publicar para ativar/verificar um domínio.
  */
 export interface DomainDnsRecord {
-  readonly type: 'TXT' | 'CNAME';
+  readonly type: "TXT" | "CNAME";
   /**
    * Nome do host/subdomínio onde o registro deve ser criado.
    */
@@ -17,7 +17,7 @@ export interface DomainDnsRecord {
 export interface DomainSummary {
   readonly id: string;
   readonly name: string;
-  readonly status: 'pending' | 'verified' | 'failed';
+  readonly status: "pending" | "verified" | "failed";
   readonly dkimSelector: string;
   readonly dkimPublicKey: string | null;
   readonly verifiedAt: string | null;
@@ -31,7 +31,7 @@ export interface DomainSummary {
 export interface DomainDetail {
   readonly id: string;
   readonly name: string;
-  readonly status: 'pending' | 'verified' | 'failed';
+  readonly status: "pending" | "verified" | "failed";
   readonly dkimSelector: string;
   readonly dkimPublicKey: string | null;
   readonly verifiedAt: string | null;
@@ -60,7 +60,7 @@ export interface CreateDomainPayload {
 export interface CreateDomainResponse {
   readonly id: string;
   readonly name: string;
-  readonly status: 'pending' | 'verified' | 'failed';
+  readonly status: "pending" | "verified" | "failed";
   readonly dkimRecordsToPublish: ReadonlyArray<DomainDnsRecord>;
 }
 
@@ -78,7 +78,7 @@ export interface DomainDnsCheck {
 export interface VerifyDomainResponse {
   readonly id: string;
   readonly name: string;
-  readonly status: 'pending' | 'verified' | 'failed';
+  readonly status: "pending" | "verified" | "failed";
   readonly verifiedAt: string | null;
   readonly checks: {
     readonly spf: DomainDnsCheck;
@@ -86,7 +86,9 @@ export interface VerifyDomainResponse {
     readonly dmarc: DomainDnsCheck;
     readonly ownership: DomainDnsCheck;
   };
-  readonly requiredChecks: ReadonlyArray<'spf' | 'dkim' | 'dmarc' | 'ownership'>;
+  readonly requiredChecks: ReadonlyArray<
+    "spf" | "dkim" | "dmarc" | "ownership"
+  >;
 }
 
 export interface DomainHealthCheckResult {
@@ -101,7 +103,7 @@ export interface DomainHealthCheckResult {
 export interface DomainHealthResponse {
   readonly domainId: string;
   readonly domain: string;
-  readonly status: 'healthy' | 'warning' | 'critical';
+  readonly status: "healthy" | "warning" | "critical";
   readonly spf: DomainHealthCheckResult;
   readonly dkim: DomainHealthCheckResult;
   readonly dmarc: DomainHealthCheckResult;

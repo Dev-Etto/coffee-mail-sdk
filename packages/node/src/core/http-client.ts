@@ -2,21 +2,21 @@ import {
   AuthenticationError,
   createErrorFromResponse,
   NetworkError,
-} from './errors.js';
-import { getI18nMessage } from './i18n/index.js';
+} from "./errors.js";
+import { getI18nMessage } from "./i18n/index.js";
 
-import type { CoffeeMailError } from './errors.js';
-import type { CoffeeMailLocale } from './i18n/types.js';
+import type { CoffeeMailError } from "./errors.js";
+import type { CoffeeMailLocale } from "./i18n/types.js";
 import type {
   CoffeeMailClientOptions,
   CoffeeMailResponse,
   HttpRequestOptions,
-} from './types.js';
+} from "./types.js";
 
-const SDK_VERSION = '0.1.0';
-const DEFAULT_BASE_URL = 'https://api.coffeemail.com';
+const SDK_VERSION = "0.1.0";
+const DEFAULT_BASE_URL = "https://api.coffeemail.com";
 const DEFAULT_TIMEOUT_MS = 10_000;
-const DEFAULT_LOCALE: CoffeeMailLocale = 'pt-BR';
+const DEFAULT_LOCALE: CoffeeMailLocale = "pt-BR";
 
 export class HttpClient {
   private readonly apiKey: string;
@@ -29,11 +29,11 @@ export class HttpClient {
     const locale = options.locale ?? DEFAULT_LOCALE;
 
     if (!apiKey || apiKey.trim().length === 0) {
-      throw new AuthenticationError(getI18nMessage('missingApiKey', locale));
+      throw new AuthenticationError(getI18nMessage("missingApiKey", locale));
     }
 
     this.apiKey = apiKey.trim();
-    this.baseUrl = (options.baseUrl ?? DEFAULT_BASE_URL).replace(/\/+$/, '');
+    this.baseUrl = (options.baseUrl ?? DEFAULT_BASE_URL).replace(/\/+$/, "");
     this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
     this.locale = locale;
     this.customFetch = options.fetch ?? globalThis.fetch;
@@ -43,23 +43,25 @@ export class HttpClient {
     return this.locale;
   }
 
-  public async request<T>(options: HttpRequestOptions): Promise<CoffeeMailResponse<T>> {
+  public async request<T>(
+    options: HttpRequestOptions,
+  ): Promise<CoffeeMailResponse<T>> {
     const url = this.buildUrl(options.path, options.query);
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.timeoutMs);
 
     const headers: Record<string, string> = {
       Authorization: `Bearer ${this.apiKey}`,
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      'Accept-Language': this.locale,
-      'User-Agent': `coffeemail-node/${SDK_VERSION}`,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "Accept-Language": this.locale,
+      "User-Agent": `coffeemail-node/${SDK_VERSION}`,
       ...options.headers,
     };
 
     try {
       const init: RequestInit = {
-        method: options.method ?? 'GET',
+        method: options.method ?? "GET",
         headers,
         signal: controller.signal,
       };
@@ -87,7 +89,11 @@ export class HttpClient {
       }
 
       if (!response.ok) {
-        const error = createErrorFromResponse(response.status, responsePayload, this.locale);
+        const error = createErrorFromResponse(
+          response.status,
+          responsePayload,
+          this.locale,
+        );
         return { data: null, error };
       }
 
@@ -95,17 +101,19 @@ export class HttpClient {
     } catch (err: unknown) {
       clearTimeout(timeoutId);
 
-      if (err instanceof Error && err.name === 'AbortError') {
+      if (err instanceof Error && err.name === "AbortError") {
         const error: CoffeeMailError = new NetworkError(
-          getI18nMessage('requestTimeout', this.locale, { timeoutMs: this.timeoutMs })
+          getI18nMessage("requestTimeout", this.locale, {
+            timeoutMs: this.timeoutMs,
+          }),
         );
         return { data: null, error };
       }
 
       const errorMessage = err instanceof Error ? err.message : String(err);
       const error: CoffeeMailError = new NetworkError(
-        getI18nMessage('networkError', this.locale, { details: errorMessage }),
-        err
+        getI18nMessage("networkError", this.locale, { details: errorMessage }),
+        err,
       );
       return { data: null, error };
     }
@@ -113,49 +121,49 @@ export class HttpClient {
 
   public get<T>(
     path: string,
-    query?: HttpRequestOptions['query'],
-    headers?: Record<string, string>
+    query?: HttpRequestOptions["query"],
+    headers?: Record<string, string>,
   ): Promise<CoffeeMailResponse<T>> {
-    return this.request<T>({ method: 'GET', path, query, headers });
+    return this.request<T>({ method: "GET", path, query, headers });
   }
 
   public post<T>(
     path: string,
     body?: unknown,
-    query?: HttpRequestOptions['query'],
-    headers?: Record<string, string>
+    query?: HttpRequestOptions["query"],
+    headers?: Record<string, string>,
   ): Promise<CoffeeMailResponse<T>> {
-    return this.request<T>({ method: 'POST', path, body, query, headers });
+    return this.request<T>({ method: "POST", path, body, query, headers });
   }
 
   public put<T>(
     path: string,
     body?: unknown,
-    query?: HttpRequestOptions['query'],
-    headers?: Record<string, string>
+    query?: HttpRequestOptions["query"],
+    headers?: Record<string, string>,
   ): Promise<CoffeeMailResponse<T>> {
-    return this.request<T>({ method: 'PUT', path, body, query, headers });
+    return this.request<T>({ method: "PUT", path, body, query, headers });
   }
 
   public delete<T>(
     path: string,
-    query?: HttpRequestOptions['query'],
-    headers?: Record<string, string>
+    query?: HttpRequestOptions["query"],
+    headers?: Record<string, string>,
   ): Promise<CoffeeMailResponse<T>> {
-    return this.request<T>({ method: 'DELETE', path, query, headers });
+    return this.request<T>({ method: "DELETE", path, query, headers });
   }
 
   public patch<T>(
     path: string,
     body?: unknown,
-    query?: HttpRequestOptions['query'],
-    headers?: Record<string, string>
+    query?: HttpRequestOptions["query"],
+    headers?: Record<string, string>,
   ): Promise<CoffeeMailResponse<T>> {
-    return this.request<T>({ method: 'PATCH', path, body, query, headers });
+    return this.request<T>({ method: "PATCH", path, body, query, headers });
   }
 
-  private buildUrl(path: string, query?: HttpRequestOptions['query']): string {
-    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  private buildUrl(path: string, query?: HttpRequestOptions["query"]): string {
+    const cleanPath = path.startsWith("/") ? path : `/${path}`;
     const fullUrl = new URL(`${this.baseUrl}${cleanPath}`);
 
     if (query) {

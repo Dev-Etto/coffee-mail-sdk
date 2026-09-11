@@ -1,19 +1,21 @@
-import type { HttpClient } from '../core/http-client.js';
-import type { CoffeeMailResponse } from '../core/types.js';
+import type { HttpClient } from "../core/http-client.js";
+import type { CoffeeMailResponse } from "../core/types.js";
 import type {
   CreateSuppressionPayload,
   ListSuppressionsQuery,
   ListSuppressionsResponse,
   SuppressionDetail,
-} from '../types/suppressions.types.js';
+} from "../types/suppressions.types.js";
 
 export class Suppressions {
   constructor(private readonly http: HttpClient) {}
 
-  public async list(query?: ListSuppressionsQuery): Promise<CoffeeMailResponse<ListSuppressionsResponse>> {
+  public async list(
+    query?: ListSuppressionsQuery,
+  ): Promise<CoffeeMailResponse<ListSuppressionsResponse>> {
     return this.http.get<ListSuppressionsResponse>(
-      '/v1/product/suppressions',
-      query as Record<string, string | number>
+      "/v1/product/suppressions",
+      query as Record<string, string | number>,
     );
   }
 
@@ -21,8 +23,13 @@ export class Suppressions {
     return this.http.get<SuppressionDetail>(`/v1/product/suppressions/${id}`);
   }
 
-  public async create(payload: CreateSuppressionPayload): Promise<CoffeeMailResponse<SuppressionDetail>> {
-    return this.http.post<SuppressionDetail>('/v1/product/suppressions', payload);
+  public async create(
+    payload: CreateSuppressionPayload,
+  ): Promise<CoffeeMailResponse<SuppressionDetail>> {
+    return this.http.post<SuppressionDetail>(
+      "/v1/product/suppressions",
+      payload,
+    );
   }
 
   /**

@@ -1,4 +1,4 @@
-import { getI18nMessage, type CoffeeMailLocale } from './i18n/index.js';
+import { getI18nMessage, type CoffeeMailLocale } from "./i18n/index.js";
 
 export interface ApiErrorPayload {
   readonly error?: {
@@ -18,9 +18,14 @@ export class CoffeeMailError extends Error {
   public readonly code: string;
   public readonly details?: unknown;
 
-  constructor(message: string, status = 500, code = 'INTERNAL_ERROR', details?: unknown) {
+  constructor(
+    message: string,
+    status = 500,
+    code = "INTERNAL_ERROR",
+    details?: unknown,
+  ) {
     super(message);
-    this.name = 'CoffeeMailError';
+    this.name = "CoffeeMailError";
     this.status = status;
     this.code = code;
     this.details = details;
@@ -33,8 +38,8 @@ export class CoffeeMailError extends Error {
  */
 export class ValidationError extends CoffeeMailError {
   constructor(message: string, details?: unknown) {
-    super(message, 400, 'VALIDATION_ERROR', details);
-    this.name = 'ValidationError';
+    super(message, 400, "VALIDATION_ERROR", details);
+    this.name = "ValidationError";
   }
 }
 
@@ -43,8 +48,8 @@ export class ValidationError extends CoffeeMailError {
  */
 export class AuthenticationError extends CoffeeMailError {
   constructor(message: string, details?: unknown) {
-    super(message, 401, 'UNAUTHORIZED', details);
-    this.name = 'AuthenticationError';
+    super(message, 401, "UNAUTHORIZED", details);
+    this.name = "AuthenticationError";
   }
 }
 
@@ -53,8 +58,8 @@ export class AuthenticationError extends CoffeeMailError {
  */
 export class PaymentRequiredError extends CoffeeMailError {
   constructor(message: string, details?: unknown) {
-    super(message, 402, 'PAYMENT_REQUIRED', details);
-    this.name = 'PaymentRequiredError';
+    super(message, 402, "PAYMENT_REQUIRED", details);
+    this.name = "PaymentRequiredError";
   }
 }
 
@@ -63,8 +68,8 @@ export class PaymentRequiredError extends CoffeeMailError {
  */
 export class ForbiddenError extends CoffeeMailError {
   constructor(message: string, details?: unknown) {
-    super(message, 403, 'FORBIDDEN', details);
-    this.name = 'ForbiddenError';
+    super(message, 403, "FORBIDDEN", details);
+    this.name = "ForbiddenError";
   }
 }
 
@@ -73,8 +78,8 @@ export class ForbiddenError extends CoffeeMailError {
  */
 export class NotFoundError extends CoffeeMailError {
   constructor(message: string, details?: unknown) {
-    super(message, 404, 'NOT_FOUND', details);
-    this.name = 'NotFoundError';
+    super(message, 404, "NOT_FOUND", details);
+    this.name = "NotFoundError";
   }
 }
 
@@ -83,8 +88,8 @@ export class NotFoundError extends CoffeeMailError {
  */
 export class ConflictError extends CoffeeMailError {
   constructor(message: string, details?: unknown) {
-    super(message, 409, 'CONFLICT', details);
-    this.name = 'ConflictError';
+    super(message, 409, "CONFLICT", details);
+    this.name = "ConflictError";
   }
 }
 
@@ -94,9 +99,13 @@ export class ConflictError extends CoffeeMailError {
 export class RateLimitError extends CoffeeMailError {
   public readonly retryAfterSeconds?: number | undefined;
 
-  constructor(message: string, retryAfterSeconds?: number | undefined, details?: unknown) {
-    super(message, 429, 'RATE_LIMIT_EXCEEDED', details);
-    this.name = 'RateLimitError';
+  constructor(
+    message: string,
+    retryAfterSeconds?: number | undefined,
+    details?: unknown,
+  ) {
+    super(message, 429, "RATE_LIMIT_EXCEEDED", details);
+    this.name = "RateLimitError";
     this.retryAfterSeconds = retryAfterSeconds;
   }
 }
@@ -106,8 +115,8 @@ export class RateLimitError extends CoffeeMailError {
  */
 export class NetworkError extends CoffeeMailError {
   constructor(message: string, details?: unknown) {
-    super(message, 0, 'NETWORK_ERROR', details);
-    this.name = 'NetworkError';
+    super(message, 0, "NETWORK_ERROR", details);
+    this.name = "NetworkError";
   }
 }
 
@@ -116,8 +125,8 @@ export class NetworkError extends CoffeeMailError {
  */
 export class InternalServerError extends CoffeeMailError {
   constructor(message: string, details?: unknown) {
-    super(message, 500, 'INTERNAL_SERVER_ERROR', details);
-    this.name = 'InternalServerError';
+    super(message, 500, "INTERNAL_SERVER_ERROR", details);
+    this.name = "InternalServerError";
   }
 }
 
@@ -148,14 +157,16 @@ const errorFactoriesByStatus: Readonly<Record<number, ErrorFactory>> = {
 export const createErrorFromResponse = (
   status: number,
   payload: unknown,
-  locale: CoffeeMailLocale
+  locale: CoffeeMailLocale,
 ): CoffeeMailError => {
-  const errPayload = (payload && typeof payload === 'object' ? payload : {}) as ApiErrorPayload;
+  const errPayload = (
+    payload && typeof payload === "object" ? payload : {}
+  ) as ApiErrorPayload;
   const message =
     errPayload.error?.message ||
     errPayload.message ||
-    getI18nMessage('unexpectedError', locale);
-  const code = errPayload.error?.code || 'API_ERROR';
+    getI18nMessage("unexpectedError", locale);
+  const code = errPayload.error?.code || "API_ERROR";
   const details = errPayload.error?.details;
 
   const factory = errorFactoriesByStatus[status];

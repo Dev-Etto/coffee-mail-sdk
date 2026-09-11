@@ -18,30 +18,49 @@
  * por quê — normalmente significa que o schema real mudou e o types/*.ts
  * correspondente precisa ser atualizado.
  */
-import type { paths } from './openapi.js';
-import type { AudienceDetail } from '../types/audiences.types.js';
-import type { BroadcastDetail } from '../types/broadcasts.types.js';
-import type { DomainDetail } from '../types/domains.types.js';
-import type { EmailDetail } from '../types/emails.types.js';
-import type { StatsResponse } from '../types/stats.types.js';
-import type { SuppressionDetail } from '../types/suppressions.types.js';
-import type { TemplateDetail } from '../types/templates.types.js';
-import type { WebhookDetail } from '../types/webhooks.types.js';
+import type { paths } from "./openapi.js";
+import type { AudienceDetail } from "../types/audiences.types.js";
+import type { BroadcastDetail } from "../types/broadcasts.types.js";
+import type { DomainDetail } from "../types/domains.types.js";
+import type { EmailDetail } from "../types/emails.types.js";
+import type { StatsResponse } from "../types/stats.types.js";
+import type { SuppressionDetail } from "../types/suppressions.types.js";
+import type { TemplateDetail } from "../types/templates.types.js";
+import type { WebhookDetail } from "../types/webhooks.types.js";
 
 type Assert<T extends true> = T;
 type Extends<A, B> = A extends B ? true : false;
 
-type Json200<Path extends keyof paths, Method extends keyof paths[Path]> = paths[Path][Method] extends {
-  responses: { 200: { content: { 'application/json': infer R } } };
+type Json200<
+  Path extends keyof paths,
+  Method extends keyof paths[Path],
+> = paths[Path][Method] extends {
+  responses: { 200: { content: { "application/json": infer R } } };
 }
   ? R
   : never;
 
-export type _CheckEmailDetail = Assert<Extends<Json200<'/v1/product/emails/{id}', 'get'>, EmailDetail>>;
-export type _CheckDomainDetail = Assert<Extends<Json200<'/v1/product/domains/{id}', 'get'>, DomainDetail>>;
-export type _CheckTemplateDetail = Assert<Extends<Json200<'/v1/product/templates/{id}', 'get'>, TemplateDetail>>;
-export type _CheckAudienceDetail = Assert<Extends<Json200<'/v1/product/audiences/{id}', 'get'>, AudienceDetail>>;
-export type _CheckBroadcastDetail = Assert<Extends<Json200<'/v1/product/broadcasts/{id}', 'get'>, BroadcastDetail>>;
-export type _CheckWebhookDetail = Assert<Extends<Json200<'/v1/product/webhooks/{id}', 'get'>, WebhookDetail>>;
-export type _CheckSuppressionDetail = Assert<Extends<Json200<'/v1/product/suppressions/{id}', 'get'>, SuppressionDetail>>;
-export type _CheckStatsResponse = Assert<Extends<Json200<'/v1/product/stats', 'get'>, StatsResponse>>;
+export type _CheckEmailDetail = Assert<
+  Extends<Json200<"/v1/product/emails/{id}", "get">, EmailDetail>
+>;
+export type _CheckDomainDetail = Assert<
+  Extends<Json200<"/v1/product/domains/{id}", "get">, DomainDetail>
+>;
+export type _CheckTemplateDetail = Assert<
+  Extends<Json200<"/v1/product/templates/{id}", "get">, TemplateDetail>
+>;
+export type _CheckAudienceDetail = Assert<
+  Extends<Json200<"/v1/product/audiences/{id}", "get">, AudienceDetail>
+>;
+export type _CheckBroadcastDetail = Assert<
+  Extends<Json200<"/v1/product/broadcasts/{id}", "get">, BroadcastDetail>
+>;
+export type _CheckWebhookDetail = Assert<
+  Extends<Json200<"/v1/product/webhooks/{id}", "get">, WebhookDetail>
+>;
+export type _CheckSuppressionDetail = Assert<
+  Extends<Json200<"/v1/product/suppressions/{id}", "get">, SuppressionDetail>
+>;
+export type _CheckStatsResponse = Assert<
+  Extends<Json200<"/v1/product/stats", "get">, StatsResponse>
+>;

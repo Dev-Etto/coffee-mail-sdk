@@ -1,4 +1,4 @@
-export type TemplateFormat = 'html' | 'react';
+export type TemplateFormat = "html" | "react";
 
 export interface TemplateVariable {
   readonly name: string;
@@ -42,8 +42,14 @@ interface CreateTemplateBase {
  * `html` ou `starterSlug` (a API rejeita ambos ou nenhum).
  */
 export type CreateTemplatePayload =
-  | (CreateTemplateBase & { readonly html: string; readonly starterSlug?: never })
-  | (CreateTemplateBase & { readonly starterSlug: string; readonly html?: never });
+  | (CreateTemplateBase & {
+      readonly html: string;
+      readonly starterSlug?: never;
+    })
+  | (CreateTemplateBase & {
+      readonly starterSlug: string;
+      readonly html?: never;
+    });
 
 /**
  * Atualização de template — todos os campos são independentes e opcionais,
@@ -105,7 +111,7 @@ export interface TestRenderTemplateResponse {
 
 export interface StarterVariable {
   readonly name: string;
-  readonly type: 'string' | 'number' | 'color';
+  readonly type: "string" | "number" | "color";
   readonly fallbackValue?: string | number;
   readonly defaultColor?: string;
   readonly description?: string;
@@ -117,7 +123,7 @@ export interface StarterVariable {
 export interface StarterManifest {
   readonly slug: string;
   readonly format: TemplateFormat;
-  readonly category: 'transactional' | 'marketing';
+  readonly category: "transactional" | "marketing";
   readonly name: string;
   readonly description: string;
   readonly defaultLocale: string;

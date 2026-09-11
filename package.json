@@ -10,7 +10,9 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "format": "prettier --write \"**/*.{ts,json,md}\"",
-    "clean": "turbo run clean && rm -rf node_modules"
+    "clean": "turbo run clean && rm -rf node_modules",
+    "build:node": "pnpm --filter @coffeemail/node build",
+    "publish:node": "pnpm --filter @coffeemail/node publish --access public --no-git-checks"
   },
   "devDependencies": {
     "@types/node": "^26.5.0",

@@ -1,4 +1,5 @@
-export type BroadcastStatus = 'draft' | 'scheduled' | 'sending' | 'sent' | 'failed' | 'cancelled';
+export type BroadcastStatus =
+  "draft" | "scheduled" | "sending" | "sent" | "failed" | "cancelled";
 
 /**
  * Uma campanha (broadcast) enviada a uma audiência.
