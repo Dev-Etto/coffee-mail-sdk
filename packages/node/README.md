@@ -91,6 +91,10 @@ console.log(data.status); // 'delivered', 'bounced', etc.
 
 * **`create(payload)`**: Registra um novo endpoint para escutar eventos.
 * **`list()`**: Lista endpoints configurados.
+* **`get(id)` / `update(id, payload)`**: Consulta e atualiza um webhook.
+* **`toggle(id, { status })`**: Ativa ou pausa um webhook.
+* **`rotateSecret(id)`**: Gera um novo segredo de assinatura HMAC.
+* **`listDeliveries(id, query)`**: Lista as tentativas de entrega de eventos.
 * **`delete(id)`**: Remove um webhook.
 * **`verifySignature(options)`**: Método utilitário local para validar assinaturas criptográficas **HMAC SHA-256** no seu próprio backend, prevenindo ataques de temporização e requisições forjadas:
 
@@ -107,12 +111,12 @@ const isValid = Webhooks.verifySignature({
 
 ### 4. Templates, Audiências e Campanhas
 
-* **`coffeemail.templates`**: Criação, listagem e pré-visualização de modelos com variáveis dinâmicas.
-* **`coffeemail.audiences`**: Gestão de listas de contatos segmentadas.
-* **`coffeemail.audiences.contacts`**: Criação e remoção de contatos por audiência.
+* **`coffeemail.templates`**: Criação, atualização, listagem, remoção, pré-visualização (`preview`), formatação (`format`), renderização sanitizada (`testRender`) e templates iniciais prontos (`listStarters`/`getStarter`).
+* **`coffeemail.audiences`**: Criação, atualização, listagem e remoção de audiências.
+* **`coffeemail.audiences.contacts`**: Criação, atualização, listagem, remoção e inserção em lote (`bulkAdd`) de contatos por audiência.
 * **`coffeemail.broadcasts`**: Criação e disparo de campanhas em massa com headers RFC 8058.
-* **`coffeemail.suppressions`**: Consulta e gerenciamento de lista de supressão (bounces e descadastros).
-* **`coffeemail.stats`**: Visão geral de métricas e taxas de entrega (`deliveryRate`, `bounceRate`).
+* **`coffeemail.suppressions`**: Criação, consulta, listagem, remoção e reativação (`reactivate`) de supressões (bounces, complaints e descadastros).
+* **`coffeemail.stats`**: `get(query)` retorna totais do período (`totalSent`, `totalDelivered`, `totalBounced`, `totalFailed`) e uma série histórica agrupada por dia/semana/mês.
 
 ---
 

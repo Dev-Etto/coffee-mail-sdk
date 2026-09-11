@@ -2,9 +2,30 @@
   "name": "@coffeemail/node",
   "version": "0.1.0",
   "description": "SDK oficial Node.js e TypeScript para a plataforma CoffeeMail",
+  "keywords": [
+    "coffeemail",
+    "email",
+    "transactional-email",
+    "sdk"
+  ],
   "author": "CoffeeMail",
   "license": "UNLICENSED",
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dev-Etto/coffee-mail-sdk.git",
+    "directory": "packages/node"
+  },
+  "homepage": "https://github.com/Dev-Etto/coffee-mail-sdk/tree/main/packages/node#readme",
+  "bugs": {
+    "url": "https://github.com/Dev-Etto/coffee-mail-sdk/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
