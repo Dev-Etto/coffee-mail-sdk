@@ -65,6 +65,15 @@ export interface CoffeeMailClientOptions {
 }
 
 /**
+ * Query de paginação por offset, usada pelos resources que ainda não migraram
+ * para paginação por cursor (ex: audiences, contacts).
+ */
+export interface OffsetPaginationQuery {
+  readonly limit?: number;
+  readonly offset?: number;
+}
+
+/**
  * Opções para execução de chamadas HTTP internas.
  */
 export interface HttpRequestOptions {

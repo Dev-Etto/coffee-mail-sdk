@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 import type { HttpClient } from "../core/http-client.js";
+import { toQueryParams } from "../core/query.js";
 import type { CoffeeMailResponse } from "../core/types.js";
 import type {
   CreateWebhookPayload,
@@ -59,7 +60,7 @@ export class Webhooks {
   ): Promise<CoffeeMailResponse<ListWebhooksResponse>> {
     return this.http.get<ListWebhooksResponse>(
       "/v1/product/webhooks",
-      query as Record<string, string | number>,
+      toQueryParams(query),
     );
   }
 
@@ -153,7 +154,7 @@ export class Webhooks {
   ): Promise<CoffeeMailResponse<ListWebhookDeliveriesResponse>> {
     return this.http.get<ListWebhookDeliveriesResponse>(
       `/v1/product/webhooks/${id}/deliveries`,
-      query as Record<string, string | number>,
+      toQueryParams(query),
     );
   }
 

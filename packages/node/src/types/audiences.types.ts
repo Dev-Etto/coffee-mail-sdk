@@ -1,6 +1,3 @@
-/**
- * Um contato pertencente a uma audiência.
- */
 export interface ContactDetail {
   readonly id: string;
   readonly email: string;

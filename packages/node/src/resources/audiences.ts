@@ -1,5 +1,9 @@
 import type { HttpClient } from "../core/http-client.js";
-import type { CoffeeMailResponse } from "../core/types.js";
+import { toQueryParams } from "../core/query.js";
+import type {
+  CoffeeMailResponse,
+  OffsetPaginationQuery,
+} from "../core/types.js";
 import type {
   AudienceDetail,
   BulkAddContactsPayload,
@@ -30,11 +34,11 @@ export class Contacts {
 
   public async list(
     audienceId: string,
-    query?: { limit?: number; offset?: number },
+    query?: OffsetPaginationQuery,
   ): Promise<CoffeeMailResponse<ListContactsResponse>> {
     return this.http.get<ListContactsResponse>(
       `/v1/product/audiences/${audienceId}/contacts`,
-      query,
+      toQueryParams(query),
     );
   }
 
@@ -88,11 +92,13 @@ export class Audiences {
     return this.http.post<AudienceDetail>("/v1/product/audiences", payload);
   }
 
-  public async list(query?: {
-    limit?: number;
-    offset?: number;
-  }): Promise<CoffeeMailResponse<ListAudiencesResponse>> {
-    return this.http.get<ListAudiencesResponse>("/v1/product/audiences", query);
+  public async list(
+    query?: OffsetPaginationQuery,
+  ): Promise<CoffeeMailResponse<ListAudiencesResponse>> {
+    return this.http.get<ListAudiencesResponse>(
+      "/v1/product/audiences",
+      toQueryParams(query),
+    );
   }
 
   public async get(id: string): Promise<CoffeeMailResponse<AudienceDetail>> {

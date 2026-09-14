@@ -1,4 +1,6 @@
 import type { HttpClient } from "../core/http-client.js";
+import { normalizeScheduledAt } from "../core/normalizers.js";
+import { toQueryParams } from "../core/query.js";
 import type { CoffeeMailResponse } from "../core/types.js";
 import type {
   BroadcastDetail,
@@ -8,17 +10,6 @@ import type {
   ListBroadcastsResponse,
   SendBroadcastResult,
 } from "../types/broadcasts.types.js";
-
-/**
- * Converte `scheduledAt` (Date | string | undefined) em string ISO 8601 ou undefined.
- * Mesmo helper usado em `emails.ts`, isolado para evitar dependência cruzada entre resources.
- */
-const normalizeScheduledAt = (
-  value: Date | string | undefined,
-): string | undefined => {
-  if (value === undefined) return undefined;
-  return value instanceof Date ? value.toISOString() : value;
-};
 
 export class Broadcasts {
   constructor(private readonly http: HttpClient) {}
@@ -39,7 +30,7 @@ export class Broadcasts {
   ): Promise<CoffeeMailResponse<ListBroadcastsResponse>> {
     return this.http.get<ListBroadcastsResponse>(
       "/v1/product/broadcasts",
-      query as Record<string, string | number>,
+      toQueryParams(query),
     );
   }
 

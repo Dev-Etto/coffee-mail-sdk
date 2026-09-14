@@ -1,4 +1,5 @@
 import type { HttpClient } from "../core/http-client.js";
+import { toQueryParams } from "../core/query.js";
 import type { CoffeeMailResponse } from "../core/types.js";
 import type {
   CreateSuppressionPayload,
@@ -15,7 +16,7 @@ export class Suppressions {
   ): Promise<CoffeeMailResponse<ListSuppressionsResponse>> {
     return this.http.get<ListSuppressionsResponse>(
       "/v1/product/suppressions",
-      query as Record<string, string | number>,
+      toQueryParams(query),
     );
   }
 

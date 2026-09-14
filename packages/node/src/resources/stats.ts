@@ -1,4 +1,5 @@
 import type { HttpClient } from "../core/http-client.js";
+import { toQueryParams } from "../core/query.js";
 import type { CoffeeMailResponse } from "../core/types.js";
 import type { GetStatsQuery, StatsResponse } from "../types/stats.types.js";
 
@@ -19,9 +20,6 @@ export class Stats {
   public async get(
     query?: GetStatsQuery,
   ): Promise<CoffeeMailResponse<StatsResponse>> {
-    return this.http.get<StatsResponse>(
-      "/v1/product/stats",
-      query as Record<string, string | number>,
-    );
+    return this.http.get<StatsResponse>("/v1/product/stats", toQueryParams(query));
   }
 }

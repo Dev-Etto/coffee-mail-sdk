@@ -1,6 +1,8 @@
 import { Buffer } from "node:buffer";
 
 import type { HttpClient } from "../core/http-client.js";
+import { normalizeScheduledAt } from "../core/normalizers.js";
+import { toQueryParams } from "../core/query.js";
 import type { CoffeeMailResponse } from "../core/types.js";
 import type {
   BatchSendEmailResult,
@@ -65,16 +67,6 @@ const serializeAttachment = (
     disposition: attachment.disposition ?? "attachment",
     ...(attachment.cid ? { cid: attachment.cid } : {}),
   };
-};
-
-/**
- * Converte `scheduledAt` (Date | ISO string) para ISO 8601. Retorna `undefined` se ausente.
- */
-const normalizeScheduledAt = (
-  value: Date | string | undefined,
-): string | undefined => {
-  if (value === undefined) return undefined;
-  return value instanceof Date ? value.toISOString() : value;
 };
 
 /**
@@ -236,7 +228,7 @@ export class Emails {
   ): Promise<CoffeeMailResponse<ListEmailsResponse>> {
     return this.http.get<ListEmailsResponse>(
       "/v1/product/emails",
-      query as Record<string, string | number>,
+      toQueryParams(query),
     );
   }
 
