@@ -20,6 +20,9 @@ export class Stats {
   public async get(
     query?: GetStatsQuery,
   ): Promise<CoffeeMailResponse<StatsResponse>> {
-    return this.http.get<StatsResponse>("/v1/product/stats", toQueryParams(query));
+    return this.http.get<StatsResponse>(
+      "/v1/product/stats",
+      toQueryParams(query),
+    );
   }
 }

@@ -92,7 +92,9 @@ describe("wire contract regression", () => {
     expect(error).toBeNull();
     expect(data?.totalSent).toBe(10);
     expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining("https://api.coffeemail.com.br/v1/product/stats?"),
+      expect.stringContaining(
+        "https://api.coffeemail.com.br/v1/product/stats?",
+      ),
       expect.objectContaining({ method: "GET" }),
     );
   });

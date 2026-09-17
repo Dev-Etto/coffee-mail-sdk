@@ -1,124 +1,110 @@
-# @coffeemail/node
+# CoffeeMail SDKs Monorepo
 
-SDK oficial do **CoffeeMail** para Node.js e TypeScript.
+Monorepo oficial dos SDKs da plataforma **CoffeeMail**, gerenciado via **Turborepo** e **pnpm workspaces**.
 
-Oferece suporte fortemente tipado, ergonômico e completo a 100% dos recursos da API de Produto do CoffeeMail, com localização nativa em **Português do Brasil** e suporte a **ESM e CommonJS**.
+Centraliza o desenvolvimento, compilação, testes, versionamento e publicação dos SDKs de integração com a API de Produto do CoffeeMail para diferentes linguagens e ecossistemas.
 
 ---
 
-## 📦 Instalação
+## 📦 Pacotes e SDKs
+
+| Pacote                 | Linguagem / Plataforma | Diretório                                                                              | Status  | Versão npm                                                                                                          |
+| :--------------------- | :--------------------- | :------------------------------------------------------------------------------------- | :------ | :------------------------------------------------------------------------------------------------------------------ |
+| **`@coffeemail/node`** | Node.js & TypeScript   | [`packages/node`](file:///Users/joaoneto/Developer/SaaS/coffee-mail-sdk/packages/node) | Estável | [![npm version](https://img.shields.io/npm/v/@coffeemail/node.svg)](https://www.npmjs.com/package/@coffeemail/node) |
+
+---
+
+## 🏗️ Estrutura do Repositório
+
+```text
+coffee-mail-sdk/
+├── packages/
+│   └── node/              # SDK oficial para Node.js / TypeScript (@coffeemail/node)
+│       ├── src/           # Recursos (emails, domains, webhooks, templates, etc.)
+│       ├── package.json   # Metadados e versão do pacote Node
+│       ├── README.md      # Documentação específica do SDK Node
+│       └── tsup.config.ts # Bundler dual ESM / CJS
+├── examples/              # Projetos de exemplo e guias práticos de uso
+├── .github/workflows/     # Workflows de CI/CD para validação e publicação
+├── pnpm-workspace.yaml    # Definição dos workspaces pnpm
+├── turbo.json             # Pipeline de tarefas orquestrado pelo Turborepo
+└── package.json           # Scripts globais do monorepo
+```
+
+---
+
+## 🚀 Como Começar (Desenvolvimento)
+
+### Pré-requisitos
+
+- **Node.js** >= 20
+- **pnpm** >= 9 (recomendado `pnpm@11.26.0`)
+
+### Instalação
 
 ```bash
-# via pnpm
-pnpm add @coffeemail/node
-
-# via npm
-npm install @coffeemail/node
-
-# via yarn
-yarn add @coffeemail/node
+pnpm install
 ```
 
----
+### Comandos Globais (Turborepo)
 
-## 🚀 Início Rápido (Quickstart)
+O Turborepo executa as tarefas em paralelo aproveitando cache local e ordenação topológica de dependências:
 
-```typescript
-import { CoffeeMail } from "@coffeemail/node";
-
-// 1. Inicialize o cliente com a sua API Key (ou defina COFFEEMAIL_API_KEY no ambiente)
-const coffeemail = new CoffeeMail("cm_live_sua_chave_aqui", {
-  locale: "pt-BR", // 'pt-BR' (padrão) ou 'en'
-});
-
-// 2. Envie um e-mail transacional (1 para 1)
-const { data, error } = await coffeemail.emails.send({
-  from: "contato@seudominio.com.br",
-  to: "cliente@gmail.com",
-  subject: "Confirmação do Pedido #123",
-  html: "<h1>Obrigado pela sua compra!</h1><p>Seu pedido está em processamento.</p>",
-});
-
-if (error) {
-  console.error(`Erro ao enviar [${error.code}]:`, error.message);
-  return;
-}
-
-console.log("E-mail enviado com sucesso! ID:", data.id);
-```
+- **Build de todos os pacotes**:
+  ```bash
+  pnpm run build
+  ```
+- **Execução de testes em todos os pacotes**:
+  ```bash
+  pnpm run test
+  ```
+- **Checagem de tipos estrita (Typecheck)**:
+  ```bash
+  pnpm run typecheck
+  ```
+- **Formatação de código**:
+  ```bash
+  pnpm run format
+  ```
+- **Limpeza de artefatos de build**:
+  ```bash
+  pnpm run clean
+  ```
 
 ---
 
-## 🛡️ Retorno Seguro `{ data, error }`
+## 🎯 Scripts Direcionados por Pacote
 
-Assim como bibliotecas modernas (ex: Supabase e Resend), o SDK do CoffeeMail retorna um objeto com `data` e `error`. Isso evita a necessidade obrigatória de blocos `try/catch` para capturar falhas esperadas da API:
+Para atuar diretamente em um pacote específico a partir da raiz:
 
-```typescript
-const { data, error } = await coffeemail.emails.get("eml_123");
-
-if (error) {
-  console.error(error.status, error.message);
-  return;
-}
-
-console.log(data.status);
-```
+- **Build do SDK Node**:
+  ```bash
+  pnpm run build:node
+  ```
+- **Publicação do SDK Node no npm**:
+  ```bash
+  pnpm run publish:node
+  ```
 
 ---
 
-## 📚 Recursos Disponíveis
+## 🚢 Pipeline de Release e CI/CD
 
-### 1. E-mails (`coffeemail.emails`)
+Cada SDK neste monorepo possui seu próprio ciclo de vida e versionamento semântico (`semver`):
 
-- **`send(payload)`**: Envia um e-mail transacional único (`to: string`).
-- **`sendBatch(items)`**: Envia múltiplos e-mails em lote.
-- **`get(id)`**: Consulta detalhes e status de um e-mail.
-- **`list(query)`**: Lista o histórico com paginação e filtros.
-- **`getEvents(id)`**: Linha do tempo de entrega (timeline de eventos).
-- **`cancel(id)`**: Cancela o envio de um e-mail agendado (`scheduled`).
-- **`resend(id)`**: Reenvia uma mensagem existente.
-
-### 2. Domínios (`coffeemail.domains`)
-
-- **`create({ name })`**: Registra um novo domínio e gera registros DNS (SPF, DKIM, DMARC).
-- **`list()`**: Lista os domínios cadastrados na organização.
-- **`get(id)`**: Retorna as entradas DNS para configuração no seu provedor de nomes.
-- **`verify(id)`**: Dispara a validação ativa dos registros DNS nos servidores globais.
-- **`delete(id)`**: Remove o domínio.
-- **`getHealth(id)`**: Diagnóstico de reputação e entregabilidade.
-
-### 3. Webhooks (`coffeemail.webhooks`)
-
-- **`create(payload)`**: Registra um novo endpoint para escutar eventos.
-- **`list()`**: Lista endpoints configurados.
-- **`get(id)` / `update(id, payload)`**: Consulta e atualiza um webhook.
-- **`toggle(id, { status })`**: Ativa ou pausa um webhook.
-- **`rotateSecret(id)`**: Gera um novo segredo de assinatura HMAC.
-- **`listDeliveries(id, query)`**: Lista as tentativas de entrega de eventos.
-- **`delete(id)`**: Remove um webhook.
-- **`verifySignature(options)`**: Método utilitário local para validar assinaturas criptográficas **HMAC SHA-256** no seu próprio backend.
-
-### 4. Templates, Audiências e Campanhas
-
-- **`coffeemail.templates`**: Criação, atualização, listagem, remoção, pré-visualização (`preview`), formatação (`format`), renderização sanitizada (`testRender`) e templates iniciais prontos (`listStarters`/`getStarter`).
-- **`coffeemail.audiences`**: Criação, atualização, listagem e remoção de audiências.
-- **`coffeemail.audiences.contacts`**: Criação, atualização, listagem, remoção e inserção em lote (`bulkAdd`) de contatos por audiência.
-- **`coffeemail.broadcasts`**: Criação e disparo de campanhas em massa com headers RFC 8058.
-- **`coffeemail.suppressions`**: Criação, consulta, listagem, remoção e reativação (`reactivate`) de supressões (bounces, complaints e descadastros).
-- **`coffeemail.stats`**: `get(query)` retorna totais do período e série histórica.
-
----
-
-## 🌐 Internacionalização e Idiomas
-
-Ao instanciar com `locale: 'pt-BR'`, o SDK:
-
-1. Envia automaticamente `Accept-Language: pt-BR` para a API, recebendo mensagens de validação traduzidas.
-2. Emite mensagens de erro locais e timeouts em Português do Brasil.
-3. Disponibiliza documentação **TSDoc** em português com exemplos de código diretamente no autocompletar da sua IDE.
+1. Atualize a versão no `package.json` do pacote correspondente (ex: [`packages/node/package.json`](file:///Users/joaoneto/Developer/SaaS/coffee-mail-sdk/packages/node/package.json)).
+2. Atualize o `package.json` da raiz para refletir o estado do repositório.
+3. Commit e tag no formato `<pacote>-v<versao>` (ex: `node-v0.1.3`):
+   ```bash
+   git commit -am "chore(release): bump @coffeemail/node to 0.1.3"
+   git push origin main
+   git tag node-v0.1.3
+   git push origin node-v0.1.3
+   ```
+4. O workflow do GitHub Actions em [`.github/workflows/publish.yml`](file:///Users/joaoneto/Developer/SaaS/coffee-mail-sdk/.github/workflows/publish.yml) valida lint, tipos, executa os testes unitários e publica o pacote com proveniência (`--provenance`) no **npm**.
 
 ---
 
 ## 📄 Licença
 
-Software proprietário da **CoffeeMail**. O uso é permitido somente a clientes autorizados da plataforma, conforme termos comerciais.
+Software proprietário da **CoffeeMail**. Consulte [`LICENSE`](file:///Users/joaoneto/Developer/SaaS/coffee-mail-sdk/LICENSE) na raiz do repositório para os termos de uso.
