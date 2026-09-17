@@ -220,22 +220,6 @@ importers:
         specifier: ^5.7.3
         version: 5.9.3
 
-  examples/node-vanilla:
-    dependencies:
-      '@coffeemail/node':
-        specifier: workspace:*
-        version: link:../../packages/node
-    devDependencies:
-      '@types/node':
-        specifier: ^22.13.9
-        version: 22.20.1
-      tsx:
-        specifier: ^4.19.3
-        version: 4.23.13
-      typescript:
-        specifier: ^5.7.3
-        version: 5.9.3
-
   packages/node:
     devDependencies:
       '@types/node':
@@ -2012,6 +1996,7 @@ snapshots:
       esbuild: 0.28.2
     optionalDependencies:
       fsevents: 2.3.3
+    optional: true
 
   turbo@2.10.12:
     optionalDependencies:
