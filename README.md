@@ -57,12 +57,11 @@ Assim como bibliotecas modernas (ex: Supabase e Resend), o SDK do CoffeeMail ret
 const { data, error } = await coffeemail.emails.get("eml_123");
 
 if (error) {
-  // Erro fortemente tipado (ValidationError, NotFoundError, RateLimitError, etc.)
   console.error(error.status, error.message);
   return;
 }
 
-console.log(data.status); // 'delivered', 'bounced', etc.
+console.log(data.status);
 ```
 
 ---
@@ -71,7 +70,7 @@ console.log(data.status); // 'delivered', 'bounced', etc.
 
 ### 1. E-mails (`coffeemail.emails`)
 
-- **`send(payload)`**: Envia um e-mail transacional único.
+- **`send(payload)`**: Envia um e-mail transacional único (`to: string`).
 - **`sendBatch(items)`**: Envia múltiplos e-mails em lote.
 - **`get(id)`**: Consulta detalhes e status de um e-mail.
 - **`list(query)`**: Lista o histórico com paginação e filtros.
@@ -97,18 +96,7 @@ console.log(data.status); // 'delivered', 'bounced', etc.
 - **`rotateSecret(id)`**: Gera um novo segredo de assinatura HMAC.
 - **`listDeliveries(id, query)`**: Lista as tentativas de entrega de eventos.
 - **`delete(id)`**: Remove um webhook.
-- **`verifySignature(options)`**: Método utilitário local para validar assinaturas criptográficas **HMAC SHA-256** no seu próprio backend, prevenindo ataques de temporização e requisições forjadas:
-
-```typescript
-import { Webhooks } from "@coffeemail/node";
-
-// Em uma rota Fastify / Express / Next.js API Route:
-const isValid = Webhooks.verifySignature({
-  payload: req.rawBody,
-  signature: req.headers["x-coffeemail-signature"],
-  secret: "whsec_seu_segredo",
-});
-```
+- **`verifySignature(options)`**: Método utilitário local para validar assinaturas criptográficas **HMAC SHA-256** no seu próprio backend.
 
 ### 4. Templates, Audiências e Campanhas
 
@@ -117,7 +105,7 @@ const isValid = Webhooks.verifySignature({
 - **`coffeemail.audiences.contacts`**: Criação, atualização, listagem, remoção e inserção em lote (`bulkAdd`) de contatos por audiência.
 - **`coffeemail.broadcasts`**: Criação e disparo de campanhas em massa com headers RFC 8058.
 - **`coffeemail.suppressions`**: Criação, consulta, listagem, remoção e reativação (`reactivate`) de supressões (bounces, complaints e descadastros).
-- **`coffeemail.stats`**: `get(query)` retorna totais do período (`totalSent`, `totalDelivered`, `totalBounced`, `totalFailed`) e uma série histórica agrupada por dia/semana/mês.
+- **`coffeemail.stats`**: `get(query)` retorna totais do período e série histórica.
 
 ---
 
@@ -133,7 +121,4 @@ Ao instanciar com `locale: 'pt-BR'`, o SDK:
 
 ## 📄 Licença
 
-Software proprietário da **CoffeeMail**. O uso é permitido somente a clientes
-autorizados da plataforma, conforme termos comerciais. Consulte `LICENSE` na
-raiz deste pacote para os termos completos ou entre em contato com
-<licensing@coffeemail.com>.
+Software proprietário da **CoffeeMail**. O uso é permitido somente a clientes autorizados da plataforma, conforme termos comerciais.

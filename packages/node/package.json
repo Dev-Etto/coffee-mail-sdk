@@ -1,6 +1,6 @@
 {
   "name": "@coffeemail/node",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "description": "SDK oficial Node.js e TypeScript para a plataforma CoffeeMail",
   "keywords": [
     "coffeemail",
