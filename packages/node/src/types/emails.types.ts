@@ -82,11 +82,11 @@ export interface SendEmailPayload {
   readonly from: EmailAddressInput;
 
   /**
-   * Destinatário ou lista de destinatários principais.
+   * Destinatário único do e-mail transacional (1-para-1).
    * @example "cliente@gmail.com"
-   * @example ["cliente1@gmail.com", "cliente2@outlook.com"]
+   * @example { email: "cliente@gmail.com", name: "Cliente Exemplo" }
    */
-  readonly to: EmailAddressInput | ReadonlyArray<EmailAddressInput>;
+  readonly to: EmailAddressInput;
 
   /**
    * Destinatários em cópia (CC).

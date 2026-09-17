@@ -38,7 +38,7 @@ describe("Suppressions", () => {
       expect(error).toBeNull();
       expect(data).toEqual(suppressionDetail);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/suppressions/sup_123",
+        "https://api.coffeemail.com.br/v1/product/suppressions/sup_123",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -61,7 +61,7 @@ describe("Suppressions", () => {
       expect(error?.code).toBe("NOT_FOUND");
       expect(error?.message).toBe("Supressão não encontrada.");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/suppressions/sup_inexistente",
+        "https://api.coffeemail.com.br/v1/product/suppressions/sup_inexistente",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -94,7 +94,7 @@ describe("Suppressions", () => {
       expect(error).toBeNull();
       expect(data).toEqual(suppressionDetail);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/suppressions",
+        "https://api.coffeemail.com.br/v1/product/suppressions",
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify({
@@ -132,7 +132,7 @@ describe("Suppressions", () => {
       expect(error).toBeNull();
       expect(data).toEqual(suppressionDetail);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/suppressions",
+        "https://api.coffeemail.com.br/v1/product/suppressions",
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify({
@@ -170,7 +170,7 @@ describe("Suppressions", () => {
       expect(error).toBeNull();
       expect(data).toEqual(suppressionDetail);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/suppressions",
+        "https://api.coffeemail.com.br/v1/product/suppressions",
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify({
@@ -206,7 +206,7 @@ describe("Suppressions", () => {
       expect(error).toBeNull();
       expect(data).toEqual(suppressionDetail);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/suppressions",
+        "https://api.coffeemail.com.br/v1/product/suppressions",
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify({
@@ -240,7 +240,7 @@ describe("Suppressions", () => {
       expect(error?.code).toBe("CONFLICT");
       expect(error?.message).toBe("Este e-mail já está na lista de supressão.");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/suppressions",
+        "https://api.coffeemail.com.br/v1/product/suppressions",
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify({
@@ -265,7 +265,7 @@ describe("Suppressions", () => {
       expect(error).toBeNull();
       expect(data).toBeNull();
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/suppressions/sup_123",
+        "https://api.coffeemail.com.br/v1/product/suppressions/sup_123",
         expect.objectContaining({ method: "DELETE" }),
       );
     });
@@ -288,7 +288,7 @@ describe("Suppressions", () => {
       expect(error?.code).toBe("NOT_FOUND");
       expect(error?.message).toBe("Supressão não encontrada.");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/suppressions/sup_inexistente",
+        "https://api.coffeemail.com.br/v1/product/suppressions/sup_inexistente",
         expect.objectContaining({ method: "DELETE" }),
       );
     });

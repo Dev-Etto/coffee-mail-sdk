@@ -57,7 +57,7 @@ describe("Templates", () => {
       expect(error).toBeNull();
       expect(data).toEqual(templateDetail);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/templates",
+        "https://api.coffeemail.com.br/v1/product/templates",
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify(payload),
@@ -94,7 +94,7 @@ describe("Templates", () => {
       expect(error).toBeNull();
       expect(data?.starterSlug).toBe("receipt");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/templates",
+        "https://api.coffeemail.com.br/v1/product/templates",
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify(payload),
@@ -151,7 +151,7 @@ describe("Templates", () => {
       expect(error).toBeNull();
       expect(data).toEqual(templateDetail);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/templates/tpl_123",
+        "https://api.coffeemail.com.br/v1/product/templates/tpl_123",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -207,7 +207,7 @@ describe("Templates", () => {
       expect(data?.data).toHaveLength(1);
       expect(data?.data[0]?.id).toBe("tpl_123");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/templates",
+        "https://api.coffeemail.com.br/v1/product/templates",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -247,7 +247,7 @@ describe("Templates", () => {
       expect(error).toBeNull();
       expect(data).toEqual({ html: "<h1>\n  Olá {{name}}\n</h1>\n" });
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/templates/format",
+        "https://api.coffeemail.com.br/v1/product/templates/format",
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify(payload),
@@ -304,7 +304,7 @@ describe("Templates", () => {
       expect(data).toEqual(testRenderResponse);
       expect(data?.sanitizeReport.scripts).toBe(1);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/templates/test-render",
+        "https://api.coffeemail.com.br/v1/product/templates/test-render",
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify(payload),
@@ -367,7 +367,7 @@ describe("Templates", () => {
       expect(data?.data).toHaveLength(1);
       expect(data?.data[0]?.slug).toBe("welcome");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/templates/starters",
+        "https://api.coffeemail.com.br/v1/product/templates/starters",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -422,7 +422,7 @@ describe("Templates", () => {
       expect(error).toBeNull();
       expect(data).toEqual(starterDetail);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/templates/starters/welcome",
+        "https://api.coffeemail.com.br/v1/product/templates/starters/welcome",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -449,7 +449,7 @@ describe("Templates", () => {
       expect(error).toBeNull();
       expect(data?.locale).toBe("en-US");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/templates/starters/welcome?locale=en-US",
+        "https://api.coffeemail.com.br/v1/product/templates/starters/welcome?locale=en-US",
         expect.objectContaining({ method: "GET" }),
       );
     });

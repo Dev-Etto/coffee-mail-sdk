@@ -48,7 +48,7 @@ describe("wire contract regression", () => {
     expect(error).toBeNull();
     expect(data).toEqual({ html: "<h1>Oi Maria</h1>", text: "Oi Maria" });
     expect(mockFetch).toHaveBeenCalledWith(
-      "https://api.coffeemail.com/v1/product/templates/preview",
+      "https://api.coffeemail.com.br/v1/product/templates/preview",
       expect.objectContaining({ method: "POST" }),
     );
   });
@@ -60,7 +60,7 @@ describe("wire contract regression", () => {
     await templates.update("tpl_123", { isActive: false });
 
     expect(mockFetch).toHaveBeenCalledWith(
-      "https://api.coffeemail.com/v1/product/templates/tpl_123",
+      "https://api.coffeemail.com.br/v1/product/templates/tpl_123",
       expect.objectContaining({ method: "PATCH" }),
     );
   });
@@ -92,7 +92,7 @@ describe("wire contract regression", () => {
     expect(error).toBeNull();
     expect(data?.totalSent).toBe(10);
     expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining("https://api.coffeemail.com/v1/product/stats?"),
+      expect.stringContaining("https://api.coffeemail.com.br/v1/product/stats?"),
       expect.objectContaining({ method: "GET" }),
     );
   });
@@ -118,7 +118,7 @@ describe("wire contract regression", () => {
 
     expect(error).toBeNull();
     expect(mockFetch).toHaveBeenCalledWith(
-      "https://api.coffeemail.com/v1/product/suppressions/sup_123/reactivate",
+      "https://api.coffeemail.com.br/v1/product/suppressions/sup_123/reactivate",
       expect.objectContaining({ method: "POST" }),
     );
   });
@@ -140,7 +140,7 @@ describe("wire contract regression", () => {
     await domains.getHealth("dom_123");
 
     expect(mockFetch).toHaveBeenCalledWith(
-      "https://api.coffeemail.com/v1/product/domains/dom_123/health",
+      "https://api.coffeemail.com.br/v1/product/domains/dom_123/health",
       expect.objectContaining({ method: "POST" }),
     );
   });
@@ -152,7 +152,7 @@ describe("wire contract regression", () => {
     const { error: deleteError } = await webhooks.delete("wh_123");
     expect(deleteError).toBeNull();
     expect(mockFetch).toHaveBeenCalledWith(
-      "https://api.coffeemail.com/v1/product/webhooks/wh_123",
+      "https://api.coffeemail.com.br/v1/product/webhooks/wh_123",
       expect.objectContaining({ method: "DELETE" }),
     );
 
@@ -161,7 +161,7 @@ describe("wire contract regression", () => {
     );
     await webhooks.toggle("wh_123", { status: "paused" });
     expect(mockFetch).toHaveBeenCalledWith(
-      "https://api.coffeemail.com/v1/product/webhooks/wh_123",
+      "https://api.coffeemail.com.br/v1/product/webhooks/wh_123",
       expect.objectContaining({ method: "PATCH" }),
     );
   });

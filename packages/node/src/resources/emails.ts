@@ -126,7 +126,7 @@ const PAYLOAD_ENTRIES: ReadonlyArray<PayloadEntry> = [
 const formatSendBody = (payload: SendEmailPayload): Record<string, unknown> => {
   const body: Record<string, unknown> = {
     from: normalizeParticipant(payload.from),
-    to: normalizeList(payload.to) ?? [],
+    to: [normalizeParticipant(payload.to)],
     subject: payload.subject,
   };
 

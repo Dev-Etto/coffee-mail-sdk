@@ -86,7 +86,7 @@ export class CoffeeMail {
    * Cria uma nova instância do cliente CoffeeMail.
    *
    * @param apiKey Chave de API de Produto (ex: `cm_live_...`). Se não informada, tenta ler da variável de ambiente `COFFEEMAIL_API_KEY`.
-   * @param options Opções adicionais como `locale` ('pt-BR' | 'en'), `baseUrl` e `timeoutMs`.
+   * @param options Opções adicionais como `locale` ('pt-BR' | 'en') e `timeoutMs`.
    */
   constructor(apiKey?: string, options: CoffeeMailClientOptions = {}) {
     const key =

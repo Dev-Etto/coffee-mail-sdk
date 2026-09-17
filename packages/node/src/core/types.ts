@@ -47,12 +47,6 @@ export interface CoffeeMailClientOptions {
   readonly locale?: CoffeeMailLocale;
 
   /**
-   * URL base da API do CoffeeMail.
-   * @default 'https://api.coffeemail.com'
-   */
-  readonly baseUrl?: string;
-
-  /**
    * Tempo limite da requisição em milissegundos.
    * @default 10000 (10 segundos)
    */

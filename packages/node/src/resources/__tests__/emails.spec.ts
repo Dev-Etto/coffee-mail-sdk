@@ -38,7 +38,7 @@ describe("Emails", () => {
     expect(data?.status).toBe("queued");
 
     expect(mockFetch).toHaveBeenCalledWith(
-      "https://api.coffeemail.com/v1/product/emails",
+      "https://api.coffeemail.com.br/v1/product/emails",
       expect.objectContaining({
         method: "POST",
         body: JSON.stringify({
@@ -63,7 +63,7 @@ describe("Emails", () => {
     expect(error).toBeNull();
     expect(data).toEqual({ id: "eml_123", status: "cancelled" });
     expect(mockFetch).toHaveBeenCalledWith(
-      "https://api.coffeemail.com/v1/product/emails/eml_123/cancel",
+      "https://api.coffeemail.com.br/v1/product/emails/eml_123/cancel",
       expect.objectContaining({ method: "POST" }),
     );
   });
@@ -109,7 +109,7 @@ describe("Emails", () => {
       expect(error).toBeNull();
       expect(data).toEqual(emailDetail);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/emails/eml_123",
+        "https://api.coffeemail.com.br/v1/product/emails/eml_123",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -132,7 +132,7 @@ describe("Emails", () => {
       expect(error?.code).toBe("NOT_FOUND");
       expect(error?.message).toBe("E-mail não encontrado.");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/emails/eml_inexistente",
+        "https://api.coffeemail.com.br/v1/product/emails/eml_inexistente",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -163,7 +163,7 @@ describe("Emails", () => {
       expect(error).toBeNull();
       expect(data).toEqual(eventsResponse);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/emails/eml_123/events",
+        "https://api.coffeemail.com.br/v1/product/emails/eml_123/events",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -184,7 +184,7 @@ describe("Emails", () => {
       expect(error?.status).toBe(404);
       expect(error?.code).toBe("NOT_FOUND");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/emails/eml_inexistente/events",
+        "https://api.coffeemail.com.br/v1/product/emails/eml_inexistente/events",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -210,7 +210,7 @@ describe("Emails", () => {
       expect(error).toBeNull();
       expect(data).toEqual(tagsResponse);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/emails/tags",
+        "https://api.coffeemail.com.br/v1/product/emails/tags",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -231,7 +231,7 @@ describe("Emails", () => {
       expect(error?.status).toBe(500);
       expect(error?.code).toBe("INTERNAL_SERVER_ERROR");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/emails/tags",
+        "https://api.coffeemail.com.br/v1/product/emails/tags",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -284,7 +284,7 @@ describe("Emails", () => {
       expect(error).toBeNull();
       expect(data).toEqual(listResponse);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/emails",
+        "https://api.coffeemail.com.br/v1/product/emails",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -307,7 +307,7 @@ describe("Emails", () => {
       expect(error).toBeNull();
       expect(data).toEqual(listResponse);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/emails?status=delivered&limit=50&tag=campanha",
+        "https://api.coffeemail.com.br/v1/product/emails?status=delivered&limit=50&tag=campanha",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -331,7 +331,7 @@ describe("Emails", () => {
       expect(error?.status).toBe(400);
       expect(error?.code).toBe("VALIDATION_ERROR");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/emails?limit=999",
+        "https://api.coffeemail.com.br/v1/product/emails?limit=999",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -359,7 +359,7 @@ describe("Emails", () => {
         queuedAt: "2026-09-14T10:00:00.000Z",
       });
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/emails/eml_123/resend",
+        "https://api.coffeemail.com.br/v1/product/emails/eml_123/resend",
         expect.objectContaining({ method: "POST" }),
       );
     });
@@ -380,7 +380,7 @@ describe("Emails", () => {
       expect(error?.status).toBe(404);
       expect(error?.code).toBe("NOT_FOUND");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/emails/eml_inexistente/resend",
+        "https://api.coffeemail.com.br/v1/product/emails/eml_inexistente/resend",
         expect.objectContaining({ method: "POST" }),
       );
     });
@@ -427,7 +427,7 @@ describe("Emails", () => {
       expect(error).toBeNull();
       expect(data).toEqual(batchResult);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/emails/batch",
+        "https://api.coffeemail.com.br/v1/product/emails/batch",
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify([
@@ -474,7 +474,7 @@ describe("Emails", () => {
       expect(error?.status).toBe(400);
       expect(error?.code).toBe("VALIDATION_ERROR");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/emails/batch",
+        "https://api.coffeemail.com.br/v1/product/emails/batch",
         expect.objectContaining({ method: "POST" }),
       );
     });

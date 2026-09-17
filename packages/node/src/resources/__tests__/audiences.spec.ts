@@ -52,7 +52,7 @@ describe("Audiences & Contacts", () => {
       expect(data?.id).toBe("aud_123");
       expect(data?.name).toBe("Newsletter");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences",
+        "https://api.coffeemail.com.br/v1/product/audiences",
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify({
@@ -84,7 +84,7 @@ describe("Audiences & Contacts", () => {
       expect(error).toBeInstanceOf(ValidationError);
       expect(error?.status).toBe(400);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences",
+        "https://api.coffeemail.com.br/v1/product/audiences",
         expect.objectContaining({ method: "POST" }),
       );
     });
@@ -108,7 +108,7 @@ describe("Audiences & Contacts", () => {
       expect(data?.id).toBe("aud_123");
       expect(data?.contactsCount).toBe(42);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences/aud_123",
+        "https://api.coffeemail.com.br/v1/product/audiences/aud_123",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -132,7 +132,7 @@ describe("Audiences & Contacts", () => {
       expect(error).toBeInstanceOf(NotFoundError);
       expect(error?.status).toBe(404);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences/aud_inexistente",
+        "https://api.coffeemail.com.br/v1/product/audiences/aud_inexistente",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -148,7 +148,7 @@ describe("Audiences & Contacts", () => {
       expect(error).toBeNull();
       expect(data).toEqual({ id: "aud_123" });
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences/aud_123",
+        "https://api.coffeemail.com.br/v1/product/audiences/aud_123",
         expect.objectContaining({
           method: "PUT",
           body: JSON.stringify({
@@ -177,7 +177,7 @@ describe("Audiences & Contacts", () => {
       expect(data).toBeNull();
       expect(error).toBeInstanceOf(ValidationError);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences/aud_123",
+        "https://api.coffeemail.com.br/v1/product/audiences/aud_123",
         expect.objectContaining({ method: "PUT" }),
       );
     });
@@ -190,7 +190,7 @@ describe("Audiences & Contacts", () => {
       expect(error).toBeNull();
       expect(data).toBeNull();
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences/aud_123",
+        "https://api.coffeemail.com.br/v1/product/audiences/aud_123",
         expect.objectContaining({ method: "DELETE" }),
       );
     });
@@ -213,7 +213,7 @@ describe("Audiences & Contacts", () => {
       expect(data).toBeNull();
       expect(error).toBeInstanceOf(NotFoundError);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences/aud_inexistente",
+        "https://api.coffeemail.com.br/v1/product/audiences/aud_inexistente",
         expect.objectContaining({ method: "DELETE" }),
       );
     });
@@ -241,7 +241,7 @@ describe("Audiences & Contacts", () => {
       expect(data?.id).toBe("con_123");
       expect(data?.email).toBe("cliente@gmail.com");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences/aud_123/contacts",
+        "https://api.coffeemail.com.br/v1/product/audiences/aud_123/contacts",
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify({
@@ -272,7 +272,7 @@ describe("Audiences & Contacts", () => {
       expect(data).toBeNull();
       expect(error).toBeInstanceOf(ValidationError);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences/aud_123/contacts",
+        "https://api.coffeemail.com.br/v1/product/audiences/aud_123/contacts",
         expect.objectContaining({ method: "POST" }),
       );
     });
@@ -303,7 +303,7 @@ describe("Audiences & Contacts", () => {
       expect(data?.contacts).toHaveLength(1);
       expect(data?.total).toBe(1);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences/aud_123/contacts?limit=10&offset=20",
+        "https://api.coffeemail.com.br/v1/product/audiences/aud_123/contacts?limit=10&offset=20",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -321,7 +321,7 @@ describe("Audiences & Contacts", () => {
       expect(error).toBeNull();
       expect(data?.total).toBe(0);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences/aud_123/contacts",
+        "https://api.coffeemail.com.br/v1/product/audiences/aud_123/contacts",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -344,7 +344,7 @@ describe("Audiences & Contacts", () => {
       expect(data).toBeNull();
       expect(error).toBeInstanceOf(NotFoundError);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences/aud_inexistente/contacts",
+        "https://api.coffeemail.com.br/v1/product/audiences/aud_inexistente/contacts",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -371,7 +371,7 @@ describe("Audiences & Contacts", () => {
       expect(data?.skipped).toBe(1);
       expect(data?.errors).toHaveLength(1);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences/aud_123/contacts/bulk",
+        "https://api.coffeemail.com.br/v1/product/audiences/aud_123/contacts/bulk",
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify({
@@ -405,7 +405,7 @@ describe("Audiences & Contacts", () => {
       expect(data).toBeNull();
       expect(error).toBeInstanceOf(ValidationError);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences/aud_123/contacts/bulk",
+        "https://api.coffeemail.com.br/v1/product/audiences/aud_123/contacts/bulk",
         expect.objectContaining({ method: "POST" }),
       );
     });
@@ -421,7 +421,7 @@ describe("Audiences & Contacts", () => {
       expect(error).toBeNull();
       expect(data).toEqual({ id: "con_123" });
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences/aud_123/contacts/con_123",
+        "https://api.coffeemail.com.br/v1/product/audiences/aud_123/contacts/con_123",
         expect.objectContaining({
           method: "PUT",
           body: JSON.stringify({
@@ -454,7 +454,7 @@ describe("Audiences & Contacts", () => {
       expect(data).toBeNull();
       expect(error).toBeInstanceOf(NotFoundError);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences/aud_123/contacts/con_inexistente",
+        "https://api.coffeemail.com.br/v1/product/audiences/aud_123/contacts/con_inexistente",
         expect.objectContaining({ method: "PUT" }),
       );
     });
@@ -467,7 +467,7 @@ describe("Audiences & Contacts", () => {
       expect(error).toBeNull();
       expect(data).toBeNull();
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences/aud_123/contacts/con_123",
+        "https://api.coffeemail.com.br/v1/product/audiences/aud_123/contacts/con_123",
         expect.objectContaining({ method: "DELETE" }),
       );
     });
@@ -493,7 +493,7 @@ describe("Audiences & Contacts", () => {
       expect(data).toBeNull();
       expect(error).toBeInstanceOf(NotFoundError);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/audiences/aud_123/contacts/con_inexistente",
+        "https://api.coffeemail.com.br/v1/product/audiences/aud_123/contacts/con_inexistente",
         expect.objectContaining({ method: "DELETE" }),
       );
     });

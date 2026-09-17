@@ -30,7 +30,7 @@ describe("HttpClient", () => {
     expect(error).toBeNull();
     expect(data).toEqual({ ok: true });
     expect(mockFetch).toHaveBeenCalledWith(
-      "https://api.coffeemail.com/v1/product/test",
+      "https://api.coffeemail.com.br/v1/product/test",
       expect.objectContaining({
         method: "GET",
         headers: expect.objectContaining({

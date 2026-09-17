@@ -53,7 +53,7 @@ describe("Broadcasts", () => {
       expect(error).toBeNull();
       expect(data).toEqual(broadcastDetail);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/broadcasts",
+        "https://api.coffeemail.com.br/v1/product/broadcasts",
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify({
@@ -90,7 +90,7 @@ describe("Broadcasts", () => {
       expect(error).toBeNull();
       expect(data?.status).toBe("scheduled");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/broadcasts",
+        "https://api.coffeemail.com.br/v1/product/broadcasts",
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify({
@@ -132,7 +132,7 @@ describe("Broadcasts", () => {
       expect(error?.status).toBe(400);
       expect(error?.code).toBe("VALIDATION_ERROR");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/broadcasts",
+        "https://api.coffeemail.com.br/v1/product/broadcasts",
         expect.objectContaining({ method: "POST" }),
       );
     });
@@ -153,7 +153,7 @@ describe("Broadcasts", () => {
       expect(error).toBeNull();
       expect(data).toEqual(listResponse);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/broadcasts",
+        "https://api.coffeemail.com.br/v1/product/broadcasts",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -179,7 +179,7 @@ describe("Broadcasts", () => {
       expect(error).toBeNull();
       expect(data).toEqual(listResponse);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/broadcasts?status=sent&limit=20&after=cursor_xyz",
+        "https://api.coffeemail.com.br/v1/product/broadcasts?status=sent&limit=20&after=cursor_xyz",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -201,7 +201,7 @@ describe("Broadcasts", () => {
       expect(error?.status).toBe(401);
       expect(error?.code).toBe("UNAUTHORIZED");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/broadcasts",
+        "https://api.coffeemail.com.br/v1/product/broadcasts",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -220,7 +220,7 @@ describe("Broadcasts", () => {
       expect(error).toBeNull();
       expect(data).toEqual(broadcastDetail);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/broadcasts/bcast_123",
+        "https://api.coffeemail.com.br/v1/product/broadcasts/bcast_123",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -243,7 +243,7 @@ describe("Broadcasts", () => {
       expect(error?.code).toBe("NOT_FOUND");
       expect(error?.message).toBe("Campanha não encontrada.");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/broadcasts/bcast_inexistente",
+        "https://api.coffeemail.com.br/v1/product/broadcasts/bcast_inexistente",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -273,7 +273,7 @@ describe("Broadcasts", () => {
         recipientsQueued: 1000,
       });
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/broadcasts/bcast_123/send",
+        "https://api.coffeemail.com.br/v1/product/broadcasts/bcast_123/send",
         expect.objectContaining({ method: "POST" }),
       );
     });
@@ -298,7 +298,7 @@ describe("Broadcasts", () => {
       expect(error?.status).toBe(409);
       expect(error?.code).toBe("CONFLICT");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/broadcasts/bcast_123/send",
+        "https://api.coffeemail.com.br/v1/product/broadcasts/bcast_123/send",
         expect.objectContaining({ method: "POST" }),
       );
     });
@@ -326,7 +326,7 @@ describe("Broadcasts", () => {
         cancelledAt: "2026-09-14T10:00:00.000Z",
       });
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/broadcasts/bcast_123/cancel",
+        "https://api.coffeemail.com.br/v1/product/broadcasts/bcast_123/cancel",
         expect.objectContaining({ method: "POST" }),
       );
     });
@@ -348,7 +348,7 @@ describe("Broadcasts", () => {
       expect(error?.status).toBe(404);
       expect(error?.code).toBe("NOT_FOUND");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/broadcasts/bcast_inexistente/cancel",
+        "https://api.coffeemail.com.br/v1/product/broadcasts/bcast_inexistente/cancel",
         expect.objectContaining({ method: "POST" }),
       );
     });

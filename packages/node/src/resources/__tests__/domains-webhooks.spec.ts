@@ -53,7 +53,7 @@ describe("Domains & Webhooks", () => {
       expect(error).toBeNull();
       expect(data?.status).toBe("verified");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/domains/dom_123/verify",
+        "https://api.coffeemail.com.br/v1/product/domains/dom_123/verify",
         expect.objectContaining({ method: "POST" }),
       );
     });
@@ -84,7 +84,7 @@ describe("Domains & Webhooks", () => {
       expect(data?.status).toBe("pending");
       expect(data?.dkimRecordsToPublish).toHaveLength(1);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/domains",
+        "https://api.coffeemail.com.br/v1/product/domains",
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify({ name: "nova-empresa.com.br" }),
@@ -136,7 +136,7 @@ describe("Domains & Webhooks", () => {
       expect(data?.domains).toHaveLength(1);
       expect(data?.domains[0]?.name).toBe("empresa.com.br");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/domains",
+        "https://api.coffeemail.com.br/v1/product/domains",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -168,7 +168,7 @@ describe("Domains & Webhooks", () => {
       expect(data?.id).toBe("dom_123");
       expect(data?.dnsRecordsToPublish).toHaveLength(1);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/domains/dom_123",
+        "https://api.coffeemail.com.br/v1/product/domains/dom_123",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -201,7 +201,7 @@ describe("Domains & Webhooks", () => {
       expect(error).toBeNull();
       expect(data?.ok).toBe(true);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/domains/dom_123",
+        "https://api.coffeemail.com.br/v1/product/domains/dom_123",
         expect.objectContaining({ method: "DELETE" }),
       );
     });
@@ -225,7 +225,7 @@ describe("Domains & Webhooks", () => {
       expect(data?.currentDay).toBe(5);
       expect(data?.dailyQuota).toBe(500);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/domains/dom_123/warmup",
+        "https://api.coffeemail.com.br/v1/product/domains/dom_123/warmup",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -291,7 +291,7 @@ describe("Domains & Webhooks", () => {
       expect(data?.id).toBe("wh_123");
       expect(data?.secret).toBe("whsec_valor_completo_unico");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/webhooks",
+        "https://api.coffeemail.com.br/v1/product/webhooks",
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify(payloadCreate),
@@ -344,7 +344,7 @@ describe("Domains & Webhooks", () => {
       expect(error).toBeNull();
       expect(data?.webhooks).toHaveLength(1);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/webhooks?status=active",
+        "https://api.coffeemail.com.br/v1/product/webhooks?status=active",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -370,7 +370,7 @@ describe("Domains & Webhooks", () => {
       expect(data?.secret).toBeNull();
       expect(data?.secretPreview).toBe("whsec_...ab12");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/webhooks/wh_123",
+        "https://api.coffeemail.com.br/v1/product/webhooks/wh_123",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -425,7 +425,7 @@ describe("Domains & Webhooks", () => {
       expect(data?.deliveries).toHaveLength(1);
       expect(data?.deliveries[0]?.status).toBe("success");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/webhooks/wh_123/deliveries?status=success&limit=10",
+        "https://api.coffeemail.com.br/v1/product/webhooks/wh_123/deliveries?status=success&limit=10",
         expect.objectContaining({ method: "GET" }),
       );
     });
@@ -443,7 +443,7 @@ describe("Domains & Webhooks", () => {
       expect(error).toBeNull();
       expect(data?.secret).toBe("whsec_novo_segredo_rotacionado");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/webhooks/wh_123/rotate-secret",
+        "https://api.coffeemail.com.br/v1/product/webhooks/wh_123/rotate-secret",
         expect.objectContaining({ method: "POST" }),
       );
     });
@@ -463,7 +463,7 @@ describe("Domains & Webhooks", () => {
       expect(error).toBeNull();
       expect(data?.status).toBe("success");
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/webhooks/wh_123/test",
+        "https://api.coffeemail.com.br/v1/product/webhooks/wh_123/test",
         expect.objectContaining({ method: "POST" }),
       );
     });
@@ -514,7 +514,7 @@ describe("Domains & Webhooks", () => {
       expect(error).toBeNull();
       expect(data?.events).toHaveLength(3);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com/v1/product/webhooks/wh_123",
+        "https://api.coffeemail.com.br/v1/product/webhooks/wh_123",
         expect.objectContaining({
           method: "PUT",
           body: JSON.stringify(updatePayload),

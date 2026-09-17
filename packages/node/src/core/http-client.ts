@@ -14,7 +14,7 @@ import type {
 } from "./types.js";
 
 const SDK_VERSION = "0.1.0";
-const DEFAULT_BASE_URL = "https://api.coffeemail.com";
+const DEFAULT_BASE_URL = "https://api.coffeemail.com.br";
 const DEFAULT_TIMEOUT_MS = 10_000;
 const DEFAULT_LOCALE: CoffeeMailLocale = "pt-BR";
 
@@ -33,7 +33,7 @@ export class HttpClient {
     }
 
     this.apiKey = apiKey.trim();
-    this.baseUrl = (options.baseUrl ?? DEFAULT_BASE_URL).replace(/\/+$/, "");
+    this.baseUrl = DEFAULT_BASE_URL;
     this.timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
     this.locale = locale;
     this.customFetch = options.fetch ?? globalThis.fetch;
