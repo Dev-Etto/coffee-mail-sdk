@@ -8,6 +8,7 @@ import { getI18nMessage } from "./i18n/index.js";
 import type { CoffeeMailError } from "./errors.js";
 import type { CoffeeMailLocale } from "./i18n/types.js";
 import type {
+  ApiKeyIntrospection,
   CoffeeMailClientOptions,
   CoffeeMailResponse,
   HttpRequestOptions,
@@ -25,6 +26,10 @@ export class HttpClient {
   private readonly locale: CoffeeMailLocale;
   private readonly customFetch: typeof globalThis.fetch;
 
+  private introspectionCache:
+    | { readonly data: ApiKeyIntrospection; readonly expiresAt: number }
+    | null = null;
+
   constructor(apiKey?: string, options: CoffeeMailClientOptions = {}) {
     const locale = options.locale ?? DEFAULT_LOCALE;
 
@@ -41,6 +46,35 @@ export class HttpClient {
 
   public getLocale(): CoffeeMailLocale {
     return this.locale;
+  }
+
+  public async introspect(
+    forceRefresh = false,
+  ): Promise<CoffeeMailResponse<ApiKeyIntrospection>> {
+    if (!forceRefresh && this.introspectionCache) {
+      const cached = this.introspectionCache;
+      if (cached.expiresAt > Date.now()) {
+        return { data: cached.data, error: null };
+      }
+      this.introspectionCache = null;
+    }
+
+    const result = await this.get<ApiKeyIntrospection>(
+      "/v1/product/auth/me/api-key",
+    );
+
+    if (result.data) {
+      this.introspectionCache = {
+        data: result.data,
+        expiresAt: Date.now() + 5 * 60 * 1000,
+      };
+    }
+
+    return result;
+  }
+
+  public invalidateIntrospectionCache(): void {
+    this.introspectionCache = null;
   }
 
   public async request<T>(

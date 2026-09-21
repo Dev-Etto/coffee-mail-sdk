@@ -10,4 +10,6 @@ export const enMessages: I18nMessages = {
     "An unexpected error occurred while communicating with CoffeeMail API.",
   invalidJson: "The server response could not be parsed as valid JSON.",
   rateLimitExceeded: "Rate limit exceeded. Please retry in a few moments.",
+  permissionDenied:
+    "This API key lacks the required permission ({requiredPermission}) for this operation. Create a key with 'full_access' permission in the dashboard.",
 };

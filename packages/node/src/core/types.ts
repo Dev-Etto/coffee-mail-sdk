@@ -78,3 +78,12 @@ export interface HttpRequestOptions {
     Record<string, string | number | boolean | undefined | null> | undefined;
   readonly headers?: Record<string, string> | undefined;
 }
+
+export type ApiKeyPermission = "sending_access" | "full_access";
+
+export interface ApiKeyIntrospection {
+  readonly id: string;
+  readonly name: string;
+  readonly organisationId: string;
+  readonly scopes: ReadonlyArray<string>;
+}

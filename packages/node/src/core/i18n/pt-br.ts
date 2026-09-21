@@ -13,4 +13,6 @@ export const ptBrMessages: I18nMessages = {
     "A resposta do servidor não pôde ser interpretada como JSON válido.",
   rateLimitExceeded:
     "Limite de requisições excedido (Rate Limit). Tente novamente em alguns segundos.",
+  permissionDenied:
+    "Esta chave de API não possui a permissão necessária ({requiredPermission}) para executar esta operação. Crie uma chave com permissão 'full_access' no dashboard.",
 };

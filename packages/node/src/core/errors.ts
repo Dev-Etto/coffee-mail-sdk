@@ -130,6 +130,16 @@ export class InternalServerError extends CoffeeMailError {
   }
 }
 
+export class PermissionError extends CoffeeMailError {
+  public readonly requiredPermission: string;
+
+  constructor(message: string, requiredPermission: string, details?: unknown) {
+    super(message, 0, "PERMISSION_DENIED", details);
+    this.name = "PermissionError";
+    this.requiredPermission = requiredPermission;
+  }
+}
+
 /**
  * Mapa de fábrica: status HTTP → classe de erro especializada.
  *

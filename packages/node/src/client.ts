@@ -106,4 +106,12 @@ export class CoffeeMail {
     this.webhooks = new Webhooks(this.http);
     this.stats = new Stats(this.http);
   }
+
+  public introspect(forceRefresh = false) {
+    return this.http.introspect(forceRefresh);
+  }
+
+  public invalidateApiKeyCache(): void {
+    this.http.invalidateIntrospectionCache();
+  }
 }

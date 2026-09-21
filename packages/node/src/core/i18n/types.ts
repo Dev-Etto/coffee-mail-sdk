@@ -7,4 +7,5 @@ export interface I18nMessages {
   readonly unexpectedError: string;
   readonly invalidJson: string;
   readonly rateLimitExceeded: string;
+  readonly permissionDenied: string;
 }

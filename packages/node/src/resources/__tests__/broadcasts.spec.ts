@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { HttpClient } from "../../core/http-client.js";
 import { Broadcasts } from "../broadcasts.js";
+import type { ApiKeyIntrospection } from "../../core/types.js";
 
 import type { BroadcastDetail } from "../../types/broadcasts.types.js";
 
@@ -9,6 +10,30 @@ describe("Broadcasts", () => {
   let mockFetch: ReturnType<typeof vi.fn>;
   let client: HttpClient;
   let broadcasts: Broadcasts;
+
+  const FULL_ACCESS_INTROSPECTION: ApiKeyIntrospection = {
+    id: "ak_1",
+    name: "test",
+    organisationId: "org_1",
+    scopes: ["full_access"],
+  };
+
+  const mockIntrospection = (introspection: ApiKeyIntrospection) => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      text: async () => JSON.stringify(introspection),
+    });
+  };
+
+  const mockOkThen = (payload: unknown) => {
+    mockIntrospection(FULL_ACCESS_INTROSPECTION);
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      text: async () => JSON.stringify(payload),
+    });
+  };
 
   beforeEach(() => {
     mockFetch = vi.fn();
@@ -37,11 +62,7 @@ describe("Broadcasts", () => {
 
   describe("create", () => {
     it("deve criar campanha com sucesso usando html e subject", async () => {
-      mockFetch.mockResolvedValue({
-        ok: true,
-        status: 201,
-        text: async () => JSON.stringify(broadcastDetail),
-      });
+      mockOkThen(broadcastDetail);
 
       const { data, error } = await broadcasts.create({
         audienceId: "aud_123",
@@ -67,15 +88,10 @@ describe("Broadcasts", () => {
     });
 
     it("deve normalizar scheduledAt de Date para string ISO 8601 no body enviado", async () => {
-      mockFetch.mockResolvedValue({
-        ok: true,
-        status: 201,
-        text: async () =>
-          JSON.stringify({
-            ...broadcastDetail,
-            status: "scheduled",
-            scheduledAt: "2026-10-01T12:00:00.000Z",
-          }),
+      mockOkThen({
+        ...broadcastDetail,
+        status: "scheduled",
+        scheduledAt: "2026-10-01T12:00:00.000Z",
       });
 
       const scheduledAt = new Date("2026-10-01T12:00:00.000Z");
@@ -102,14 +118,15 @@ describe("Broadcasts", () => {
         }),
       );
 
-      const [, init] = mockFetch.mock.calls[0] as [string, { body: string }];
+      const [, init] = mockFetch.mock.calls[1] as [string, { body: string }];
       const sentBody = JSON.parse(init.body) as { scheduledAt: unknown };
       expect(sentBody.scheduledAt).toBe("2026-10-01T12:00:00.000Z");
       expect(typeof sentBody.scheduledAt).toBe("string");
     });
 
     it("deve retornar erro de validação quando payload é inválido", async () => {
-      mockFetch.mockResolvedValue({
+      mockIntrospection(FULL_ACCESS_INTROSPECTION);
+      mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 400,
         text: async () =>
@@ -141,12 +158,7 @@ describe("Broadcasts", () => {
   describe("list", () => {
     it("deve listar campanhas sem filtros", async () => {
       const listResponse = { broadcasts: [broadcastDetail], nextCursor: null };
-
-      mockFetch.mockResolvedValue({
-        ok: true,
-        status: 200,
-        text: async () => JSON.stringify(listResponse),
-      });
+      mockOkThen(listResponse);
 
       const { data, error } = await broadcasts.list();
 
@@ -163,12 +175,7 @@ describe("Broadcasts", () => {
         broadcasts: [broadcastDetail],
         nextCursor: "cursor_abc",
       };
-
-      mockFetch.mockResolvedValue({
-        ok: true,
-        status: 200,
-        text: async () => JSON.stringify(listResponse),
-      });
+      mockOkThen(listResponse);
 
       const { data, error } = await broadcasts.list({
         status: "sent",
@@ -185,7 +192,8 @@ describe("Broadcasts", () => {
     });
 
     it("deve retornar erro quando a autenticação falha", async () => {
-      mockFetch.mockResolvedValue({
+      mockIntrospection(FULL_ACCESS_INTROSPECTION);
+      mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 401,
         text: async () =>
@@ -209,11 +217,7 @@ describe("Broadcasts", () => {
 
   describe("get", () => {
     it("deve buscar campanha por id com sucesso", async () => {
-      mockFetch.mockResolvedValue({
-        ok: true,
-        status: 200,
-        text: async () => JSON.stringify(broadcastDetail),
-      });
+      mockOkThen(broadcastDetail);
 
       const { data, error } = await broadcasts.get("bcast_123");
 
@@ -226,7 +230,8 @@ describe("Broadcasts", () => {
     });
 
     it("deve retornar erro NOT_FOUND quando a campanha não existe", async () => {
-      mockFetch.mockResolvedValue({
+      mockIntrospection(FULL_ACCESS_INTROSPECTION);
+      mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 404,
         text: async () =>
@@ -251,16 +256,11 @@ describe("Broadcasts", () => {
 
   describe("send", () => {
     it("deve disparar envio de campanha com sucesso", async () => {
-      mockFetch.mockResolvedValue({
-        ok: true,
-        status: 200,
-        text: async () =>
-          JSON.stringify({
-            id: "bcast_123",
-            status: "sending",
-            recipientsTotal: 1000,
-            recipientsQueued: 1000,
-          }),
+      mockOkThen({
+        id: "bcast_123",
+        status: "sending",
+        recipientsTotal: 1000,
+        recipientsQueued: 1000,
       });
 
       const { data, error } = await broadcasts.send("bcast_123");
@@ -279,7 +279,8 @@ describe("Broadcasts", () => {
     });
 
     it("deve retornar erro de conflito ao tentar enviar campanha já enviada", async () => {
-      mockFetch.mockResolvedValue({
+      mockIntrospection(FULL_ACCESS_INTROSPECTION);
+      mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 409,
         text: async () =>
@@ -306,15 +307,10 @@ describe("Broadcasts", () => {
 
   describe("cancel", () => {
     it("deve cancelar campanha com sucesso", async () => {
-      mockFetch.mockResolvedValue({
-        ok: true,
-        status: 200,
-        text: async () =>
-          JSON.stringify({
-            id: "bcast_123",
-            status: "cancelled",
-            cancelledAt: "2026-09-14T10:00:00.000Z",
-          }),
+      mockOkThen({
+        id: "bcast_123",
+        status: "cancelled",
+        cancelledAt: "2026-09-14T10:00:00.000Z",
       });
 
       const { data, error } = await broadcasts.cancel("bcast_123");
@@ -332,7 +328,8 @@ describe("Broadcasts", () => {
     });
 
     it("deve retornar erro NOT_FOUND ao cancelar campanha inexistente", async () => {
-      mockFetch.mockResolvedValue({
+      mockIntrospection(FULL_ACCESS_INTROSPECTION);
+      mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 404,
         text: async () =>
@@ -351,6 +348,98 @@ describe("Broadcasts", () => {
         "https://api.coffeemail.com.br/v1/product/broadcasts/bcast_inexistente/cancel",
         expect.objectContaining({ method: "POST" }),
       );
+    });
+  });
+
+  describe("permission gate", () => {
+    const SENDING_INTROSPECTION: ApiKeyIntrospection = {
+      id: "ak_sending",
+      name: "transacional",
+      organisationId: "org_1",
+      scopes: ["sending_access"],
+    };
+
+    it("deve lançar PermissionError em create quando chave é sending_access", async () => {
+      client.invalidateIntrospectionCache();
+      mockIntrospection(SENDING_INTROSPECTION);
+
+      const { data, error } = await broadcasts.create({
+        audienceId: "aud_1",
+        fromEmail: "c@e.com.br",
+        html: "<p>x</p>",
+        subject: "x",
+      });
+
+      expect(data).toBeNull();
+      expect(error).not.toBeNull();
+      expect(error?.name).toBe("PermissionError");
+      expect(error?.code).toBe("PERMISSION_DENIED");
+      expect(error?.status).toBe(0);
+      const calledUrls = mockFetch.mock.calls.map(
+        (c) => (c[0] as string) ?? "",
+      );
+      expect(
+        calledUrls.some((u) => u.includes("/v1/product/broadcasts")),
+      ).toBe(false);
+    });
+
+    it("deve lançar PermissionError em send quando chave é sending_access", async () => {
+      client.invalidateIntrospectionCache();
+      mockIntrospection(SENDING_INTROSPECTION);
+
+      const { data, error } = await broadcasts.send("bcast_1");
+
+      expect(data).toBeNull();
+      expect(error?.name).toBe("PermissionError");
+      expect(error?.requiredPermission).toBe("full_access");
+    });
+
+    it("deve prosseguir normalmente quando introspecção falha (modo conservador)", async () => {
+      client.invalidateIntrospectionCache();
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+        text: async () => JSON.stringify({ error: { code: "UNAUTHORIZED" } }),
+      });
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 201,
+        text: async () => JSON.stringify(broadcastDetail),
+      });
+
+      const { data, error } = await broadcasts.create({
+        audienceId: "aud_1",
+        fromEmail: "c@e.com.br",
+        html: "<p>x</p>",
+        subject: "x",
+      });
+
+      expect(error).toBeNull();
+      expect(data).toEqual(broadcastDetail);
+    });
+
+    it("deve cachear resultado da introspecção entre chamadas", async () => {
+      mockIntrospection(FULL_ACCESS_INTROSPECTION);
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify({ broadcasts: [], nextCursor: null }),
+      });
+
+      await broadcasts.list();
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        text: async () => JSON.stringify({ broadcasts: [], nextCursor: null }),
+      });
+      await broadcasts.list();
+
+      expect(mockFetch).toHaveBeenCalledTimes(3);
+      const introspectCalls = mockFetch.mock.calls.filter((c) =>
+        (c[0] as string).includes("/auth/me/api-key"),
+      );
+      expect(introspectCalls).toHaveLength(1);
     });
   });
 });

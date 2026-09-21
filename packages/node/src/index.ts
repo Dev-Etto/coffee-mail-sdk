@@ -13,9 +13,12 @@ export {
   RateLimitError,
   NetworkError,
   InternalServerError,
+  PermissionError,
 } from "./core/errors.js";
 
 export type {
+  ApiKeyIntrospection,
+  ApiKeyPermission,
   CoffeeMailClientOptions,
   CoffeeMailResponse,
 } from "./core/types.js";
