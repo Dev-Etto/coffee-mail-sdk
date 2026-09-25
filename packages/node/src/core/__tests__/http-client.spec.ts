@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   AuthenticationError,
   NotFoundError,
+  RateLimitError,
   ValidationError,
 } from "../errors.js";
 import { HttpClient } from "../http-client.js";
@@ -45,6 +46,7 @@ describe("HttpClient", () => {
     const mockFetch = vi.fn().mockResolvedValue({
       ok: false,
       status: 400,
+      headers: { get: () => null },
       text: async () =>
         JSON.stringify({
           error: {
@@ -67,6 +69,7 @@ describe("HttpClient", () => {
     const mockFetch = vi.fn().mockResolvedValue({
       ok: false,
       status: 404,
+      headers: { get: () => null },
       text: async () =>
         JSON.stringify({
           error: {
@@ -82,5 +85,42 @@ describe("HttpClient", () => {
     expect(data).toBeNull();
     expect(error).toBeInstanceOf(NotFoundError);
     expect(error?.status).toBe(404);
+  });
+
+  it("deve popular retryAfterSeconds a partir do header Retry-After em 429", async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 429,
+      headers: { get: (name: string) => (name === "retry-after" ? "30" : null) },
+      text: async () =>
+        JSON.stringify({
+          error: { code: "RATE_LIMIT_EXCEEDED", message: "Muitas requisições" },
+        }),
+    });
+
+    const client = new HttpClient("cm_live_teste123", { fetch: mockFetch });
+    const { data, error } = await client.get("/v1/product/emails");
+
+    expect(data).toBeNull();
+    expect(error).toBeInstanceOf(RateLimitError);
+    expect((error as RateLimitError).retryAfterSeconds).toBe(30);
+  });
+
+  it("deve manter retryAfterSeconds indefinido quando o header Retry-After está ausente", async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 429,
+      headers: { get: () => null },
+      text: async () =>
+        JSON.stringify({
+          error: { code: "RATE_LIMIT_EXCEEDED", message: "Muitas requisições" },
+        }),
+    });
+
+    const client = new HttpClient("cm_live_teste123", { fetch: mockFetch });
+    const { error } = await client.get("/v1/product/emails");
+
+    expect(error).toBeInstanceOf(RateLimitError);
+    expect((error as RateLimitError).retryAfterSeconds).toBeUndefined();
   });
 });

@@ -24,6 +24,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Check version sync
+        run: pnpm --filter @coffeemail/node run check:version-sync
+
       - name: Typecheck
         run: pnpm run typecheck
 

@@ -1,5 +1,5 @@
 import type { HttpClient } from "../core/http-client.js";
-import { PermissionError } from "../core/errors.js";
+import { ForbiddenError, PermissionError } from "../core/errors.js";
 import { getI18nMessage } from "../core/i18n/index.js";
 import { normalizeScheduledAt } from "../core/normalizers.js";
 import { toQueryParams } from "../core/query.js";
@@ -21,67 +21,64 @@ export class Broadcasts {
   public async create(
     payload: CreateBroadcastPayload,
   ): Promise<CoffeeMailResponse<BroadcastDetail>> {
-    const permissionCheck = await this.assertFullAccess("broadcasts.create");
-    if (permissionCheck) return permissionCheck;
-
     const scheduledAt = normalizeScheduledAt(payload.scheduledAt);
 
-    return this.http.post<BroadcastDetail>("/v1/product/broadcasts", {
-      ...payload,
-      ...(scheduledAt ? { scheduledAt } : {}),
-    });
+    const result = await this.http.post<BroadcastDetail>(
+      "/v1/product/broadcasts",
+      { ...payload, ...(scheduledAt ? { scheduledAt } : {}) },
+    );
+    return this.remapForbidden(result, "broadcasts.create");
   }
 
   public async list(
     query?: ListBroadcastsQuery,
   ): Promise<CoffeeMailResponse<ListBroadcastsResponse>> {
-    const permissionCheck = await this.assertFullAccess("broadcasts.list");
-    if (permissionCheck) return permissionCheck;
-
-    return this.http.get<ListBroadcastsResponse>(
+    const result = await this.http.get<ListBroadcastsResponse>(
       "/v1/product/broadcasts",
       toQueryParams(query),
     );
+    return this.remapForbidden(result, "broadcasts.list");
   }
 
   public async get(id: string): Promise<CoffeeMailResponse<BroadcastDetail>> {
-    const permissionCheck = await this.assertFullAccess("broadcasts.get");
-    if (permissionCheck) return permissionCheck;
-
-    return this.http.get<BroadcastDetail>(`/v1/product/broadcasts/${id}`);
+    const result = await this.http.get<BroadcastDetail>(
+      `/v1/product/broadcasts/${id}`,
+    );
+    return this.remapForbidden(result, "broadcasts.get");
   }
 
   public async send(
     id: string,
   ): Promise<CoffeeMailResponse<SendBroadcastResult>> {
-    const permissionCheck = await this.assertFullAccess("broadcasts.send");
-    if (permissionCheck) return permissionCheck;
-
-    return this.http.post<SendBroadcastResult>(
+    const result = await this.http.post<SendBroadcastResult>(
       `/v1/product/broadcasts/${id}/send`,
     );
+    return this.remapForbidden(result, "broadcasts.send");
   }
 
   public async cancel(
     id: string,
   ): Promise<CoffeeMailResponse<CancelBroadcastResult>> {
-    const permissionCheck = await this.assertFullAccess("broadcasts.cancel");
-    if (permissionCheck) return permissionCheck;
-
-    return this.http.post<CancelBroadcastResult>(
+    const result = await this.http.post<CancelBroadcastResult>(
       `/v1/product/broadcasts/${id}/cancel`,
     );
+    return this.remapForbidden(result, "broadcasts.cancel");
   }
 
-  private async assertFullAccess(
+  /**
+   * O servidor já aplica a autorização de `full_access` para broadcasts (HTTP 403).
+   * Este método preserva o contrato público pré-existente convertendo esse 403
+   * (que o SDK mapeia para `ForbiddenError`) de volta para `PermissionError` —
+   * a classe que este recurso sempre expôs para esse cenário — sem reintroduzir
+   * o pre-flight client-side que causava falso-negativo (fail-open quando a
+   * introspecção falhava) e falso-positivo (cache de 5min rejeitando chamadas
+   * válidas após um upgrade de escopo).
+   */
+  private remapForbidden<T>(
+    result: CoffeeMailResponse<T>,
     operation: string,
-  ): Promise<CoffeeMailResponse<never> | null> {
-    const result = await this.http.introspect();
-    if (!result.data) return null;
-
-    const scopes = result.data.scopes;
-    const hasFull = scopes.includes(REQUIRES_FULL_ACCESS);
-    if (hasFull) return null;
+  ): CoffeeMailResponse<T> {
+    if (!(result.error instanceof ForbiddenError)) return result;
 
     return {
       data: null,
@@ -90,7 +87,7 @@ export class Broadcasts {
           requiredPermission: `${REQUIRES_FULL_ACCESS} (called by ${operation})`,
         }),
         REQUIRES_FULL_ACCESS,
-        { operation, currentScopes: scopes },
+        { operation, details: result.error.details },
       ),
     };
   }

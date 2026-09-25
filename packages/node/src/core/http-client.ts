@@ -14,7 +14,7 @@ import type {
   HttpRequestOptions,
 } from "./types.js";
 
-const SDK_VERSION = "0.1.0";
+const SDK_VERSION = "0.1.4";
 const DEFAULT_BASE_URL = "https://api.coffeemail.com.br";
 const DEFAULT_TIMEOUT_MS = 10_000;
 const DEFAULT_LOCALE: CoffeeMailLocale = "pt-BR";
@@ -123,10 +123,16 @@ export class HttpClient {
       }
 
       if (!response.ok) {
+        const retryAfterHeader = response.headers?.get("retry-after") ?? null;
+        const retryAfterSeconds =
+          retryAfterHeader !== null && /^\d+$/.test(retryAfterHeader)
+            ? Number(retryAfterHeader)
+            : undefined;
         const error = createErrorFromResponse(
           response.status,
           responsePayload,
           this.locale,
+          retryAfterSeconds,
         );
         return { data: null, error };
       }

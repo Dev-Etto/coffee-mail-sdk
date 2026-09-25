@@ -157,7 +157,6 @@ const errorFactoriesByStatus: Readonly<Record<number, ErrorFactory>> = {
   403: (message, details) => new ForbiddenError(message, details),
   404: (message, details) => new NotFoundError(message, details),
   409: (message, details) => new ConflictError(message, details),
-  429: (message, details) => new RateLimitError(message, undefined, details),
   500: (message, details) => new InternalServerError(message, details),
   502: (message, details) => new InternalServerError(message, details),
   503: (message, details) => new InternalServerError(message, details),
@@ -168,6 +167,7 @@ export const createErrorFromResponse = (
   status: number,
   payload: unknown,
   locale: CoffeeMailLocale,
+  retryAfterSeconds?: number,
 ): CoffeeMailError => {
   const errPayload = (
     payload && typeof payload === "object" ? payload : {}
@@ -178,6 +178,10 @@ export const createErrorFromResponse = (
     getI18nMessage("unexpectedError", locale);
   const code = errPayload.error?.code || "API_ERROR";
   const details = errPayload.error?.details;
+
+  if (status === 429) {
+    return new RateLimitError(message, retryAfterSeconds, details);
+  }
 
   const factory = errorFactoriesByStatus[status];
   if (factory) {

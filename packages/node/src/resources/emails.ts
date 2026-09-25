@@ -1,5 +1,6 @@
 import { Buffer } from "node:buffer";
 
+import { ValidationError } from "../core/errors.js";
 import type { HttpClient } from "../core/http-client.js";
 import { normalizeScheduledAt } from "../core/normalizers.js";
 import { toQueryParams } from "../core/query.js";
@@ -33,6 +34,16 @@ const isPresent = (value: unknown): boolean => {
 const normalizeParticipant = (input: EmailAddressInput): EmailParticipant => {
   if (typeof input === "string") {
     return { email: input.trim() };
+  }
+  if (
+    input === null ||
+    typeof input !== "object" ||
+    typeof (input as { email?: unknown }).email !== "string"
+  ) {
+    throw new ValidationError(
+      "Invalid email participant: expected a string email address or an object with an `email` string field.",
+      { received: input },
+    );
   }
   return {
     email: input.email.trim(),

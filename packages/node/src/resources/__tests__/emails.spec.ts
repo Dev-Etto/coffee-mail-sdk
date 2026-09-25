@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { ValidationError } from "../../core/errors.js";
 import { HttpClient } from "../../core/http-client.js";
 import { Emails } from "../emails.js";
 
@@ -477,6 +478,46 @@ describe("Emails", () => {
         "https://api.coffeemail.com.br/v1/product/emails/batch",
         expect.objectContaining({ method: "POST" }),
       );
+    });
+  });
+
+  describe("participante malformado", () => {
+    it("send() lança ValidationError (não TypeError) quando `to` está nulo", async () => {
+      await expect(
+        emails.send({
+          from: "contato@empresa.com.br",
+          to: null as never,
+          subject: "Teste",
+          html: "<p>oi</p>",
+        }),
+      ).rejects.toBeInstanceOf(ValidationError);
+      expect(mockFetch).not.toHaveBeenCalled();
+    });
+
+    it("send() lança ValidationError quando `to` é um objeto sem `email`", async () => {
+      await expect(
+        emails.send({
+          from: "contato@empresa.com.br",
+          to: { name: "Sem email" } as never,
+          subject: "Teste",
+          html: "<p>oi</p>",
+        }),
+      ).rejects.toBeInstanceOf(ValidationError);
+      expect(mockFetch).not.toHaveBeenCalled();
+    });
+
+    it("sendBatch() lança ValidationError quando um item tem `from` malformado", async () => {
+      await expect(
+        emails.sendBatch([
+          {
+            from: {} as never,
+            to: "cliente@gmail.com",
+            subject: "Teste",
+            html: "<p>oi</p>",
+          },
+        ]),
+      ).rejects.toBeInstanceOf(ValidationError);
+      expect(mockFetch).not.toHaveBeenCalled();
     });
   });
 });

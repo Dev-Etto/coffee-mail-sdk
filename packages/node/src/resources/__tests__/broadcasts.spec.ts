@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { HttpClient } from "../../core/http-client.js";
 import { Broadcasts } from "../broadcasts.js";
-import type { ApiKeyIntrospection } from "../../core/types.js";
 
 import type { BroadcastDetail } from "../../types/broadcasts.types.js";
 
@@ -11,26 +10,10 @@ describe("Broadcasts", () => {
   let client: HttpClient;
   let broadcasts: Broadcasts;
 
-  const FULL_ACCESS_INTROSPECTION: ApiKeyIntrospection = {
-    id: "ak_1",
-    name: "test",
-    organisationId: "org_1",
-    scopes: ["full_access"],
-  };
-
-  const mockIntrospection = (introspection: ApiKeyIntrospection) => {
+  const mockOkThen = (payload: unknown, status = 200) => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      status: 200,
-      text: async () => JSON.stringify(introspection),
-    });
-  };
-
-  const mockOkThen = (payload: unknown) => {
-    mockIntrospection(FULL_ACCESS_INTROSPECTION);
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      status: 200,
+      status,
       text: async () => JSON.stringify(payload),
     });
   };
@@ -118,14 +101,13 @@ describe("Broadcasts", () => {
         }),
       );
 
-      const [, init] = mockFetch.mock.calls[1] as [string, { body: string }];
+      const [, init] = mockFetch.mock.calls[0] as [string, { body: string }];
       const sentBody = JSON.parse(init.body) as { scheduledAt: unknown };
       expect(sentBody.scheduledAt).toBe("2026-10-01T12:00:00.000Z");
       expect(typeof sentBody.scheduledAt).toBe("string");
     });
 
     it("deve retornar erro de validação quando payload é inválido", async () => {
-      mockIntrospection(FULL_ACCESS_INTROSPECTION);
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 400,
@@ -192,7 +174,6 @@ describe("Broadcasts", () => {
     });
 
     it("deve retornar erro quando a autenticação falha", async () => {
-      mockIntrospection(FULL_ACCESS_INTROSPECTION);
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 401,
@@ -230,7 +211,6 @@ describe("Broadcasts", () => {
     });
 
     it("deve retornar erro NOT_FOUND quando a campanha não existe", async () => {
-      mockIntrospection(FULL_ACCESS_INTROSPECTION);
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 404,
@@ -279,7 +259,6 @@ describe("Broadcasts", () => {
     });
 
     it("deve retornar erro de conflito ao tentar enviar campanha já enviada", async () => {
-      mockIntrospection(FULL_ACCESS_INTROSPECTION);
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 409,
@@ -328,7 +307,6 @@ describe("Broadcasts", () => {
     });
 
     it("deve retornar erro NOT_FOUND ao cancelar campanha inexistente", async () => {
-      mockIntrospection(FULL_ACCESS_INTROSPECTION);
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 404,
@@ -351,17 +329,21 @@ describe("Broadcasts", () => {
     });
   });
 
-  describe("permission gate", () => {
-    const SENDING_INTROSPECTION: ApiKeyIntrospection = {
-      id: "ak_sending",
-      name: "transacional",
-      organisationId: "org_1",
-      scopes: ["sending_access"],
-    };
+  describe("permission gate (aplicada pelo servidor)", () => {
+    const forbiddenResponse = () => ({
+      ok: false,
+      status: 403,
+      text: async () =>
+        JSON.stringify({
+          error: {
+            code: "FORBIDDEN",
+            message: "Requer permissão full_access.",
+          },
+        }),
+    });
 
-    it("deve lançar PermissionError em create quando chave é sending_access", async () => {
-      client.invalidateIntrospectionCache();
-      mockIntrospection(SENDING_INTROSPECTION);
+    it("remapeia o 403 do servidor para PermissionError em create", async () => {
+      mockFetch.mockResolvedValueOnce(forbiddenResponse());
 
       const { data, error } = await broadcasts.create({
         audienceId: "aud_1",
@@ -371,75 +353,32 @@ describe("Broadcasts", () => {
       });
 
       expect(data).toBeNull();
-      expect(error).not.toBeNull();
       expect(error?.name).toBe("PermissionError");
       expect(error?.code).toBe("PERMISSION_DENIED");
-      expect(error?.status).toBe(0);
-      const calledUrls = mockFetch.mock.calls.map(
-        (c) => (c[0] as string) ?? "",
-      );
-      expect(
-        calledUrls.some((u) => u.includes("/v1/product/broadcasts")),
-      ).toBe(false);
+      // Sem pre-flight client-side: uma única chamada de rede, a requisição real.
+      expect(mockFetch).toHaveBeenCalledTimes(1);
     });
 
-    it("deve lançar PermissionError em send quando chave é sending_access", async () => {
-      client.invalidateIntrospectionCache();
-      mockIntrospection(SENDING_INTROSPECTION);
+    it("remapeia o 403 do servidor para PermissionError em send", async () => {
+      mockFetch.mockResolvedValueOnce(forbiddenResponse());
 
       const { data, error } = await broadcasts.send("bcast_1");
 
       expect(data).toBeNull();
       expect(error?.name).toBe("PermissionError");
-      expect(error?.requiredPermission).toBe("full_access");
-    });
-
-    it("deve prosseguir normalmente quando introspecção falha (modo conservador)", async () => {
-      client.invalidateIntrospectionCache();
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 401,
-        text: async () => JSON.stringify({ error: { code: "UNAUTHORIZED" } }),
-      });
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        status: 201,
-        text: async () => JSON.stringify(broadcastDetail),
-      });
-
-      const { data, error } = await broadcasts.create({
-        audienceId: "aud_1",
-        fromEmail: "c@e.com.br",
-        html: "<p>x</p>",
-        subject: "x",
-      });
-
-      expect(error).toBeNull();
-      expect(data).toEqual(broadcastDetail);
-    });
-
-    it("deve cachear resultado da introspecção entre chamadas", async () => {
-      mockIntrospection(FULL_ACCESS_INTROSPECTION);
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        text: async () => JSON.stringify({ broadcasts: [], nextCursor: null }),
-      });
-
-      await broadcasts.list();
-
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        text: async () => JSON.stringify({ broadcasts: [], nextCursor: null }),
-      });
-      await broadcasts.list();
-
-      expect(mockFetch).toHaveBeenCalledTimes(3);
-      const introspectCalls = mockFetch.mock.calls.filter((c) =>
-        (c[0] as string).includes("/auth/me/api-key"),
+      expect((error as { requiredPermission?: string })?.requiredPermission).toBe(
+        "full_access",
       );
-      expect(introspectCalls).toHaveLength(1);
+    });
+
+    it("não faz nenhuma chamada de introspecção antes da requisição real", async () => {
+      mockOkThen({ broadcasts: [], nextCursor: null });
+
+      await broadcasts.list();
+
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      const calledUrls = mockFetch.mock.calls.map((c) => (c[0] as string) ?? "");
+      expect(calledUrls.some((u) => u.includes("/auth/me/api-key"))).toBe(false);
     });
   });
 });
