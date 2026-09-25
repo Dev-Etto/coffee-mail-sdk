@@ -1,6 +1,6 @@
 {
   "name": "coffee-mail-sdk",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "license": "UNLICENSED",
   "description": "Monorepo de SDKs oficiais do CoffeeMail (proprietário)",
