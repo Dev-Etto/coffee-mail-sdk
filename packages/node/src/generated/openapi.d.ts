@@ -3371,8 +3371,12 @@ export interface paths {
                  * @enum {string}
                  */
                 sourceLocale: "en" | "pt-BR" | "es";
-                /** @description Slug do template inicial usado como base */
-                starterSlug: string | null;
+                /** @description Alias único amigável do template */
+                alias: string | null;
+                /** @description Texto de pré-visualização (preheader) */
+                preheader: string | null;
+                /** @description Estrutura TipTap em formato JSON */
+                contentJson: Record<string, unknown> | null;
                 /**
                  * Format: date-time
                  * @description Data de criação do template
@@ -3420,8 +3424,12 @@ export interface paths {
              * @enum {string}
              */
             format?: "html" | "react";
-            /** @description Slug do template inicial usado como base */
-            starterSlug?: string;
+            /** @description Alias único amigável do template */
+            alias?: string | null;
+            /** @description Texto de pré-visualização (preheader) */
+            preheader?: string | null;
+            /** @description Estrutura TipTap em formato JSON */
+            contentJson?: Record<string, unknown> | null;
             /**
              * @description Idioma de origem do conteúdo do template
              * @enum {string}
@@ -3475,8 +3483,12 @@ export interface paths {
                * @enum {string}
                */
               sourceLocale: "en" | "pt-BR" | "es";
-              /** @description Slug do template inicial usado como base */
-              starterSlug: string | null;
+              /** @description Alias único amigável do template */
+              alias: string | null;
+              /** @description Texto de pré-visualização (preheader) */
+              preheader: string | null;
+              /** @description Estrutura TipTap em formato JSON */
+              contentJson: Record<string, unknown> | null;
               /**
                * Format: date-time
                * @description Data de criação do template
@@ -3560,8 +3572,12 @@ export interface paths {
                * @enum {string}
                */
               sourceLocale: "en" | "pt-BR" | "es";
-              /** @description Slug do template inicial usado como base */
-              starterSlug: string | null;
+              /** @description Alias único amigável do template */
+              alias: string | null;
+              /** @description Texto de pré-visualização (preheader) */
+              preheader: string | null;
+              /** @description Estrutura TipTap em formato JSON */
+              contentJson: Record<string, unknown> | null;
               /**
                * Format: date-time
                * @description Data de criação do template
@@ -3642,8 +3658,12 @@ export interface paths {
              * @enum {string}
              */
             sourceLocale?: "en" | "pt-BR" | "es";
-            /** @description Slug do template inicial usado como base */
-            starterSlug?: string | null;
+            /** @description Alias único amigável do template */
+            alias?: string | null;
+            /** @description Texto de pré-visualização (preheader) */
+            preheader?: string | null;
+            /** @description Estrutura TipTap em formato JSON */
+            contentJson?: Record<string, unknown> | null;
           };
         };
       };
@@ -3692,8 +3712,12 @@ export interface paths {
                * @enum {string}
                */
               sourceLocale: "en" | "pt-BR" | "es";
-              /** @description Slug do template inicial usado como base */
-              starterSlug: string | null;
+              /** @description Alias único amigável do template */
+              alias: string | null;
+              /** @description Texto de pré-visualização (preheader) */
+              preheader: string | null;
+              /** @description Estrutura TipTap em formato JSON */
+              contentJson: Record<string, unknown> | null;
               /**
                * Format: date-time
                * @description Data de criação do template

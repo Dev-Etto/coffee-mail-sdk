@@ -2,6 +2,8 @@ export type TemplateFormat = "html" | "react";
 
 export interface TemplateVariable {
   readonly name: string;
+  readonly type?: "string" | "number" | "boolean" | "date" | "url" | "image";
+  readonly fallbackValue?: string;
   readonly description?: string;
 }
 
@@ -12,14 +14,16 @@ export interface TemplateDetail {
   readonly id: string;
   readonly organisationId: string;
   readonly name: string;
+  readonly alias: string | null;
   readonly subject: string | null;
+  readonly preheader: string | null;
   readonly html: string;
+  readonly contentJson: Record<string, unknown> | null;
   readonly textPayload: string | null;
   readonly variables: ReadonlyArray<TemplateVariable>;
   readonly isActive: boolean;
   readonly format: TemplateFormat;
   readonly sourceLocale: string;
-  readonly starterSlug: string | null;
   readonly createdAt: string;
   readonly updatedAt: string;
 }
@@ -28,43 +32,37 @@ export interface ListTemplatesResponse {
   readonly data: ReadonlyArray<TemplateDetail>;
 }
 
-interface CreateTemplateBase {
+/**
+ * Payload para criar um template na plataforma ou no Playground.
+ */
+export interface CreateTemplatePayload {
   readonly name: string;
-  readonly subject?: string;
-  readonly textPayload?: string;
+  readonly alias?: string | null;
+  readonly subject?: string | null;
+  readonly preheader?: string | null;
+  readonly html: string;
+  readonly contentJson?: Record<string, unknown> | null;
+  readonly textPayload?: string | null;
   readonly variables?: ReadonlyArray<TemplateVariable>;
   readonly format?: TemplateFormat;
   readonly sourceLocale?: string;
 }
 
 /**
- * Payload para criar um template. É preciso fornecer exatamente um de
- * `html` ou `starterSlug` (a API rejeita ambos ou nenhum).
- */
-export type CreateTemplatePayload =
-  | (CreateTemplateBase & {
-      readonly html: string;
-      readonly starterSlug?: never;
-    })
-  | (CreateTemplateBase & {
-      readonly starterSlug: string;
-      readonly html?: never;
-    });
-
-/**
- * Atualização de template — todos os campos são independentes e opcionais,
- * sem a restrição de exclusividade de `create()`.
+ * Atualização de template — todos os campos são independentes e opcionais.
  */
 export interface UpdateTemplatePayload {
   readonly name?: string;
+  readonly alias?: string | null;
   readonly subject?: string | null;
+  readonly preheader?: string | null;
   readonly html?: string;
+  readonly contentJson?: Record<string, unknown> | null;
   readonly textPayload?: string | null;
   readonly variables?: ReadonlyArray<TemplateVariable>;
   readonly format?: TemplateFormat;
   readonly isActive?: boolean;
   readonly sourceLocale?: string;
-  readonly starterSlug?: string | null;
 }
 
 export interface PreviewTemplatePayload {
@@ -109,37 +107,14 @@ export interface TestRenderTemplateResponse {
   };
 }
 
-export interface StarterVariable {
-  readonly name: string;
-  readonly type: "string" | "number" | "color";
-  readonly fallbackValue?: string | number;
-  readonly defaultColor?: string;
-  readonly description?: string;
+export interface TestSendTemplatePayload {
+  readonly to: string;
+  readonly variables?: Record<string, unknown>;
 }
 
-/**
- * Template inicial pronto oferecido pela plataforma (welcome, receipt, etc).
- */
-export interface StarterManifest {
-  readonly slug: string;
-  readonly format: TemplateFormat;
-  readonly category: "transactional" | "marketing";
-  readonly name: string;
-  readonly description: string;
-  readonly defaultLocale: string;
-  readonly availableLocales: ReadonlyArray<string>;
-  readonly variables: ReadonlyArray<StarterVariable>;
-}
-
-export interface ListStartersResponse {
-  readonly data: ReadonlyArray<StarterManifest>;
-}
-
-/**
- * Template inicial com o código-fonte completo, no idioma resolvido.
- */
-export interface StarterDetail extends StarterManifest {
-  readonly locale: string;
+export interface TestSendTemplateResponse {
+  readonly messageId: string;
+  readonly to: string;
   readonly subject: string;
-  readonly source: string;
+  readonly sentAt: string;
 }

@@ -26,19 +26,21 @@ describe("Templates", () => {
   });
 
   describe("create", () => {
-    it("deve criar um template a partir de HTML bruto com POST correto", async () => {
+    it("deve criar um template com alias, preheader e contentJson com POST correto", async () => {
       const templateDetail = {
         id: "tpl_123",
         organisationId: "org_1",
         name: "Boas-vindas",
+        alias: "welcome-email",
         subject: "Bem-vindo!",
+        preheader: "Ficamos felizes em ter você aqui",
         html: "<h1>Olá {{name}}</h1>",
+        contentJson: { type: "doc", content: [] },
         textPayload: null,
         variables: [{ name: "name", description: "Nome do destinatário" }],
         isActive: true,
         format: "html",
         sourceLocale: "pt-BR",
-        starterSlug: null,
         createdAt: "2026-09-01T00:00:00.000Z",
         updatedAt: "2026-09-01T00:00:00.000Z",
       };
@@ -47,8 +49,11 @@ describe("Templates", () => {
 
       const payload = {
         name: "Boas-vindas",
+        alias: "welcome-email",
         subject: "Bem-vindo!",
+        preheader: "Ficamos felizes em ter você aqui",
         html: "<h1>Olá {{name}}</h1>",
+        contentJson: { type: "doc", content: [] },
         variables: [{ name: "name", description: "Nome do destinatário" }],
       };
 
@@ -65,50 +70,13 @@ describe("Templates", () => {
       );
     });
 
-    it("deve criar um template a partir de starterSlug com POST correto", async () => {
-      const templateDetail = {
-        id: "tpl_456",
-        organisationId: "org_1",
-        name: "Recibo",
-        subject: "Seu recibo",
-        html: "<h1>Recibo</h1>",
-        textPayload: null,
-        variables: [],
-        isActive: true,
-        format: "html",
-        sourceLocale: "pt-BR",
-        starterSlug: "receipt",
-        createdAt: "2026-09-01T00:00:00.000Z",
-        updatedAt: "2026-09-01T00:00:00.000Z",
-      };
-
-      mockFetch.mockResolvedValue(jsonResponse(templateDetail));
-
-      const payload = {
-        name: "Recibo",
-        starterSlug: "receipt",
-      };
-
-      const { data, error } = await templates.create(payload);
-
-      expect(error).toBeNull();
-      expect(data?.starterSlug).toBe("receipt");
-      expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com.br/v1/product/templates",
-        expect.objectContaining({
-          method: "POST",
-          body: JSON.stringify(payload),
-        }),
-      );
-    });
-
     it("deve converter erro 400 (payload inválido) em ValidationError", async () => {
       mockFetch.mockResolvedValue(
         jsonResponse(
           {
             error: {
               code: "VALIDATION_ERROR",
-              message: "É preciso fornecer html ou starterSlug",
+              message: "O campo html é obrigatório",
             },
           },
           400,
@@ -122,7 +90,7 @@ describe("Templates", () => {
       expect(data).toBeNull();
       expect(error).toBeInstanceOf(ValidationError);
       expect(error?.status).toBe(400);
-      expect(error?.message).toBe("É preciso fornecer html ou starterSlug");
+      expect(error?.message).toBe("O campo html é obrigatório");
     });
   });
 
@@ -132,14 +100,16 @@ describe("Templates", () => {
         id: "tpl_123",
         organisationId: "org_1",
         name: "Boas-vindas",
+        alias: "welcome",
         subject: "Bem-vindo!",
+        preheader: null,
         html: "<h1>Olá {{name}}</h1>",
+        contentJson: null,
         textPayload: null,
         variables: [],
         isActive: true,
         format: "html",
         sourceLocale: "pt-BR",
-        starterSlug: null,
         createdAt: "2026-09-01T00:00:00.000Z",
         updatedAt: "2026-09-01T00:00:00.000Z",
       };
@@ -185,14 +155,16 @@ describe("Templates", () => {
             id: "tpl_123",
             organisationId: "org_1",
             name: "Boas-vindas",
+            alias: "welcome",
             subject: "Bem-vindo!",
+            preheader: null,
             html: "<h1>Olá</h1>",
+            contentJson: null,
             textPayload: null,
             variables: [],
             isActive: true,
             format: "html",
             sourceLocale: "pt-BR",
-            starterSlug: null,
             createdAt: "2026-09-01T00:00:00.000Z",
             updatedAt: "2026-09-01T00:00:00.000Z",
           },
@@ -335,139 +307,51 @@ describe("Templates", () => {
     });
   });
 
-  describe("listStarters", () => {
-    it("deve listar templates iniciais com GET correto", async () => {
-      const listStartersResponse = {
-        data: [
-          {
-            slug: "welcome",
-            format: "html",
-            category: "transactional",
-            name: "Boas-vindas",
-            description: "Template de boas-vindas para novos usuários",
-            defaultLocale: "pt-BR",
-            availableLocales: ["pt-BR", "en-US"],
-            variables: [
-              {
-                name: "userName",
-                type: "string",
-                fallbackValue: "Cliente",
-                description: "Nome do usuário",
-              },
-            ],
-          },
-        ],
+  describe("testSend", () => {
+    it("deve enviar e-mail de teste com POST correto para /v1/product/templates/:id/test-send", async () => {
+      const testSendResponse = {
+        messageId: "msg_abc123",
+        to: "developer@example.com",
+        subject: "[TESTE] Bem-vindo Alice!",
+        sentAt: "2026-09-01T00:00:00.000Z",
       };
 
-      mockFetch.mockResolvedValue(jsonResponse(listStartersResponse));
+      mockFetch.mockResolvedValue(jsonResponse(testSendResponse));
 
-      const { data, error } = await templates.listStarters();
-
-      expect(error).toBeNull();
-      expect(data?.data).toHaveLength(1);
-      expect(data?.data[0]?.slug).toBe("welcome");
-      expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com.br/v1/product/templates/starters",
-        expect.objectContaining({ method: "GET" }),
-      );
-    });
-
-    it("deve converter erro 500 (falha interna) em erro com status correto", async () => {
-      mockFetch.mockResolvedValue(
-        jsonResponse(
-          {
-            error: {
-              code: "INTERNAL_SERVER_ERROR",
-              message: "Erro inesperado no servidor",
-            },
-          },
-          500,
-        ),
-      );
-
-      const { data, error } = await templates.listStarters();
-
-      expect(data).toBeNull();
-      expect(error?.status).toBe(500);
-    });
-  });
-
-  describe("getStarter", () => {
-    it("deve buscar um template inicial específico sem locale com GET correto", async () => {
-      const starterDetail = {
-        slug: "welcome",
-        format: "html",
-        category: "transactional",
-        name: "Boas-vindas",
-        description: "Template de boas-vindas para novos usuários",
-        defaultLocale: "pt-BR",
-        availableLocales: ["pt-BR", "en-US"],
-        variables: [
-          {
-            name: "userName",
-            type: "string",
-            fallbackValue: "Cliente",
-            description: "Nome do usuário",
-          },
-        ],
-        locale: "pt-BR",
-        subject: "Bem-vindo!",
-        source: "<h1>Olá {{userName}}</h1>",
+      const payload = {
+        to: "developer@example.com",
+        variables: { name: "Alice" },
       };
 
-      mockFetch.mockResolvedValue(jsonResponse(starterDetail));
-
-      const { data, error } = await templates.getStarter("welcome");
+      const { data, error } = await templates.testSend("tpl_123", payload);
 
       expect(error).toBeNull();
-      expect(data).toEqual(starterDetail);
+      expect(data).toEqual(testSendResponse);
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com.br/v1/product/templates/starters/welcome",
-        expect.objectContaining({ method: "GET" }),
+        "https://api.coffeemail.com.br/v1/product/templates/tpl_123/test-send",
+        expect.objectContaining({
+          method: "POST",
+          body: JSON.stringify(payload),
+        }),
       );
     });
 
-    it("deve buscar um template inicial com locale explícito via query string", async () => {
-      const starterDetail = {
-        slug: "welcome",
-        format: "html",
-        category: "transactional",
-        name: "Welcome",
-        description: "Welcome template for new users",
-        defaultLocale: "pt-BR",
-        availableLocales: ["pt-BR", "en-US"],
-        variables: [],
-        locale: "en-US",
-        subject: "Welcome!",
-        source: "<h1>Hello {{userName}}</h1>",
-      };
-
-      mockFetch.mockResolvedValue(jsonResponse(starterDetail));
-
-      const { data, error } = await templates.getStarter("welcome", "en-US");
-
-      expect(error).toBeNull();
-      expect(data?.locale).toBe("en-US");
-      expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.coffeemail.com.br/v1/product/templates/starters/welcome?locale=en-US",
-        expect.objectContaining({ method: "GET" }),
-      );
-    });
-
-    it("deve converter erro 404 (starter/locale inexistente) em NotFoundError", async () => {
+    it("deve converter erro 404 (template não encontrado) em NotFoundError", async () => {
       mockFetch.mockResolvedValue(
         jsonResponse(
           {
             error: {
               code: "RESOURCE_NOT_FOUND",
-              message: "Template inicial não encontrado para o locale fr-FR",
+              message: "Template não encontrado",
             },
           },
           404,
         ),
       );
 
-      const { data, error } = await templates.getStarter("welcome", "fr-FR");
+      const { data, error } = await templates.testSend("tpl_inexistente", {
+        to: "developer@example.com",
+      });
 
       expect(data).toBeNull();
       expect(error).toBeInstanceOf(NotFoundError);

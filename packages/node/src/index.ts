@@ -81,10 +81,8 @@ export type {
   FormatTemplateResponse,
   TestRenderTemplatePayload,
   TestRenderTemplateResponse,
-  StarterVariable,
-  StarterManifest,
-  ListStartersResponse,
-  StarterDetail,
+  TestSendTemplatePayload,
+  TestSendTemplateResponse,
 } from "./types/templates.types.js";
 
 export type {

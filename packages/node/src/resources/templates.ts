@@ -4,14 +4,14 @@ import type {
   CreateTemplatePayload,
   FormatTemplatePayload,
   FormatTemplateResponse,
-  ListStartersResponse,
   ListTemplatesResponse,
   PreviewTemplatePayload,
   PreviewTemplateResponse,
-  StarterDetail,
   TemplateDetail,
   TestRenderTemplatePayload,
   TestRenderTemplateResponse,
+  TestSendTemplatePayload,
+  TestSendTemplateResponse,
   UpdateTemplatePayload,
 } from "../types/templates.types.js";
 
@@ -88,26 +88,16 @@ export class Templates {
   }
 
   /**
-   * Lista os templates iniciais prontos oferecidos pela plataforma.
+   * Dispara um e-mail de teste real usando o template cadastrado, mesclando
+   * as variáveis informadas com os valores de fallback.
    */
-  public async listStarters(): Promise<
-    CoffeeMailResponse<ListStartersResponse>
-  > {
-    return this.http.get<ListStartersResponse>(
-      "/v1/product/templates/starters",
-    );
-  }
-
-  /**
-   * Busca um template inicial específico, com o código-fonte completo.
-   */
-  public async getStarter(
-    slug: string,
-    locale?: string,
-  ): Promise<CoffeeMailResponse<StarterDetail>> {
-    return this.http.get<StarterDetail>(
-      `/v1/product/templates/starters/${slug}`,
-      locale ? { locale } : undefined,
+  public async testSend(
+    id: string,
+    payload: TestSendTemplatePayload,
+  ): Promise<CoffeeMailResponse<TestSendTemplateResponse>> {
+    return this.http.post<TestSendTemplateResponse>(
+      `/v1/product/templates/${id}/test-send`,
+      payload,
     );
   }
 }
